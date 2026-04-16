@@ -42,7 +42,7 @@ import {
 } from 'lucide-react';
 
 /* ─── helpers ──────────────────────────────────────────────────── */
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const categoryConfig = {
   'Dead Animal': { color: '#ef4444', bg: 'rgba(239,68,68,0.12)', icon: '🐾' },

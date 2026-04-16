@@ -128,7 +128,7 @@ const Signup = () => {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/auth/request-otp', 
+     await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/request-otp`,
         { email, password, role, name, assignedArea },
         { timeout: 15000 } // 15s Timeout
       );
@@ -148,7 +148,7 @@ const Signup = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-otp', { email, otp });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, { email, otp });
       
       // Store dummy password in local storage so Login can verify it seamlessly for demo purposes
       localStorage.setItem('localAuthPassword', password);

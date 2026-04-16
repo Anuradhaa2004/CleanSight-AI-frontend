@@ -8,7 +8,7 @@ import {
   Sun, Moon
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const getStatusColor = (st) => {
   if (st === 'Open') return { color: '#facc15', bg: 'rgba(250,204,21,0.12)', border: 'rgba(250,204,21,0.3)' };

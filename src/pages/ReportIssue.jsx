@@ -190,7 +190,7 @@ const ReportIssue = () => {
       analysisData.append('image', selected);
 
       try {
-        const res = await axios.post('http://localhost:5000/api/reports/analyze', analysisData);
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reports/analyze`, analysisData);
         if (res.data.category) {
           setAiCategory(res.data.category);
         }
@@ -248,7 +248,7 @@ const ReportIssue = () => {
 
     try {
       // Send to the new /api/report/ticket endpoint
-      const res = await axios.post('http://localhost:5000/api/report/ticket', submitData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reports/ticket`, submitData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
