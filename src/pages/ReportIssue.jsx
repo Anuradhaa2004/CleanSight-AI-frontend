@@ -20,6 +20,7 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
+import { apiUrl } from '../config/api';
 
 const ReportIssue = () => {
   const navigate = useNavigate();
@@ -190,7 +191,7 @@ const ReportIssue = () => {
       analysisData.append('image', selected);
 
       try {
-        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reports/analyze`, analysisData);
+        const res = await axios.post(apiUrl('/api/reports/analyze'), analysisData);
         if (res.data.category) {
           setAiCategory(res.data.category);
         }
@@ -248,7 +249,7 @@ const ReportIssue = () => {
 
     try {
       // Send to the new /api/report/ticket endpoint
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reports/ticket`, submitData, {
+      const res = await axios.post(apiUrl('/api/reports/ticket'), submitData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -262,7 +263,12 @@ const ReportIssue = () => {
       });
     } catch (err) {
       console.error('Submission failed:', err);
-      setError(err.response?.data?.message || 'Failed to submit ticket. Please try again.');
+      if (err?.message?.includes('API URL not configured')) {
+        setError(err.message);
+        setIsSubmitting(false);
+        return;
+      }
+      setError(err.response?.data?.message || err.response?.data?.error || 'Failed to submit ticket. Please try again.');
     }
     setIsSubmitting(false);
   };

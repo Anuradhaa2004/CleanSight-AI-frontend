@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import axios from 'axios';
+import { API_BASE } from '../config/api';
 import {
   FileText,
   History,
@@ -42,7 +43,6 @@ import {
 } from 'lucide-react';
 
 /* ─── helpers ──────────────────────────────────────────────────── */
-const API_BASE = import.meta.env.VITE_API_URL;
 
 const categoryConfig = {
   'Dead Animal': { color: '#ef4444', bg: 'rgba(239,68,68,0.12)', icon: '🐾' },

@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config/api';
 import {
   LogOut, Shield, FileText, CheckCircle2, AlertTriangle,
   MapPin, Activity, LayoutDashboard, Database, User,
   Sun, Moon
 } from 'lucide-react';
-
-const API_BASE = import.meta.env.VITE_API_URL;
 
 const getStatusColor = (st) => {
   if (st === 'Open') return { color: '#facc15', bg: 'rgba(250,204,21,0.12)', border: 'rgba(250,204,21,0.3)' };
