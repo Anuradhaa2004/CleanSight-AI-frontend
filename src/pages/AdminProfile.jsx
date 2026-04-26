@@ -164,11 +164,11 @@ const AdminProfile = () => {
       <style>{`
          .dashboard-root { display: flex; flex-direction: row; }
          .desktop-sidebar { z-index: 40; flex-shrink: 0; display: flex; flex-direction: column; overflow-x: hidden; border-right: 1px solid ${T.border}; }
-         .top-header { height: 72px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid ${T.border}; background: ${T.header}; flex-shrink: 0; }
-         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+         .top-header { position: sticky; top: 0; z-index: 50; height: 72px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid ${T.border}; background: ${T.header}; backdrop-filter: blur(10px); flex-shrink: 0; }
+         .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
          .scrollable-workspace { flex: 1; padding: 32px; overflow-y: auto; }
-         .form-input { width: 100%; padding: 14px 18px; border-radius: 12px; background: ${T.input}; border: 1px solid ${T.border}; color: ${T.textMain}; font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s; }
-         .form-input:focus { border-color: ${T.accent}; }
+         .form-input { width: 100%; padding: 14px 18px; border-radius: 12px; background: ${T.input}; border: 1px solid ${T.border}; color: ${T.textMain}; font-size: 15px; font-weight: 600; outline: none; transition: all 0.2s; }
+         .form-input:focus { border-color: ${T.accent}; box-shadow: 0 0 0 4px ${T.accent}15; }
          .section-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: ${T.accent}; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
          .lang-chip { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1px solid ${T.border}; }
       `}</style>
@@ -344,23 +344,19 @@ const AdminProfile = () => {
                     </div>
 
                     <div style={{ gridColumn: 'span 2' }}>
-                      <div className="section-label"><Languages size={14} /> Spoken Languages</div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, padding: '16px', borderRadius: 12, background: T.input, border: `1px solid ${T.border}` }}>
-                         {languageList.map(lang => (
-                           <div 
-                             key={lang}
-                             onClick={() => handleLanguageChange(lang)}
-                             className="lang-chip"
-                             style={{ 
-                               background: formData.languages.includes(lang) ? T.accent : 'transparent',
-                               color: formData.languages.includes(lang) ? '#fff' : T.text,
-                               borderColor: formData.languages.includes(lang) ? T.accent : T.border
-                             }}
-                           >
-                             {lang}
-                           </div>
-                         ))}
-                      </div>
+                      <div className="section-label"><Languages size={14} /> Spoken Language (Primary)</div>
+                      <select 
+                        value={formData.languages[0] || ''} 
+                        onChange={(e) => setFormData({...formData, languages: [e.target.value]})}
+                        className="form-input"
+                      >
+                        <option value="">Select Language</option>
+                        <option value="English">English (Default)</option>
+                        <option value="Hindi">Hindi (Default)</option>
+                        {languageList.filter(l => l !== 'English' && l !== 'Hindi').map(lang => (
+                          <option key={lang} value={lang}>{lang}</option>
+                        ))}
+                      </select>
                     </div>
 
                     <div style={{ gridColumn: 'span 2' }}>
@@ -375,7 +371,16 @@ const AdminProfile = () => {
                     </div>
 
                     <div style={{ gridColumn: 'span 2', position: 'relative' }}>
-                      <div className="section-label"><Lock size={14} /> Security Password</div>
+                      <div className="section-label" style={{ justifyContent: 'space-between' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Lock size={14} /> Security Password</span>
+                        <button 
+                          type="button" 
+                          onClick={() => navigate('/forgot-password')}
+                          style={{ background: 'none', border: 'none', color: T.accent, fontSize: 10, fontStyle: 'italic', cursor: 'pointer' }}
+                        >
+                          FORGOT PASSWORD?
+                        </button>
+                      </div>
                       <input 
                         type={showPassword ? "text" : "password"} 
                         value={formData.password} 
