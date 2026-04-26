@@ -978,7 +978,7 @@ const LatestTicketSpotlight = ({ ticket, loading, T, isDark }) => {
   );
 
   const imgSrc = ticket.imageUrl
-    ? `${API_BASE}${ticket.imageUrl}`
+    ? (ticket.imageUrl.startsWith('http') ? ticket.imageUrl : `${API_BASE}${ticket.imageUrl}`)
     : null;
 
   return (
@@ -1446,7 +1446,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction, T, isDark }) 
   const cat = getCatCfg(ticket.aiCategory);
   const st = getStatusCfg(ticket.status);
   const StIcon = st.icon;
-  const imgSrc = ticket.imageUrl ? `${API_BASE}${ticket.imageUrl}` : null;
+  const imgSrc = ticket.imageUrl ? (ticket.imageUrl.startsWith('http') ? ticket.imageUrl : `${API_BASE}${ticket.imageUrl}`) : null;
 
   const handleAction = async (val) => {
     setConfirming(true);

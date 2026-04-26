@@ -239,7 +239,7 @@ const AuthorityDashboard = () => {
             </div>
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
-            <button 
+            <button
               onClick={() => navigate('/admin-profile')}
               style={{ background: 'none', padding: 0, border: 'none', cursor: 'pointer' }}
             >
@@ -352,7 +352,7 @@ const AuthorityDashboard = () => {
             <div style={{ fontSize: 13, fontWeight: 600, color: '#64748b' }}>
               {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </div>
-            <button 
+            <button
               onClick={() => navigate('/admin-profile')}
               style={{ padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
             >
@@ -550,126 +550,126 @@ const AuthorityDashboard = () => {
 
           {/* Active Incidents Board */}
           {activeTab === 'board' && (
-          <div style={{ background: T.card, borderRadius: 20, border: `1px solid ${T.border}`, overflow: 'hidden' }}>
-            <div style={{ padding: '24px 28px', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: 18, color: T.textMain, fontWeight: 800 }}>Active Incidents Board</h2>
-              <button onClick={fetchTickets} style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${T.border}`, color: T.textMain, padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>Refresh Database</button>
-            </div>
+            <div style={{ background: T.card, borderRadius: 20, border: `1px solid ${T.border}`, overflow: 'hidden' }}>
+              <div style={{ padding: '24px 28px', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ margin: 0, fontSize: 18, color: T.textMain, fontWeight: 800 }}>Active Incidents Board</h2>
+                <button onClick={fetchTickets} style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${T.border}`, color: T.textMain, padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>Refresh Database</button>
+              </div>
 
-            <div style={{ overflowX: 'auto' }}>
-              <table className="incidents-table" style={{ width: '100%', minWidth: 800, borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${T.border}`, background: 'rgba(255,255,255,0.02)' }}>
-                    <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tracking ID</th>
-                    <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Evidence</th>
-                    <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category Target</th>
-                    <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Location Detail</th>
-                    <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Action Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <tr><td colSpan={5} style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Loading database...</td></tr>
-                  ) : tickets.length === 0 ? (
-                    <tr><td colSpan={5} style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>No incidents matched for {assignedArea}.</td></tr>
-                  ) : (
-                    tickets.map((t) => {
-                      const stCfg = getStatusColor(t.status);
-                      return (
-                        <tr key={t._id} style={{ borderBottom: `1px solid ${T.border}` }}>
-                          <td style={{ padding: '20px 28px', fontSize: 14, fontFamily: 'monospace', color: '#3b82f6', fontWeight: 700 }}>{t.trackingId}</td>
-                          <td style={{ padding: '20px 28px' }}>
-                            <div style={{ 
-                              width: 60, height: 44, borderRadius: 8, 
-                              overflow: 'hidden', border: `1px solid ${T.border}`,
-                              background: 'rgba(0,0,0,0.2)'
-                            }}>
-                              <img 
-                                src={`${API_BASE}${t.imageUrl}`} 
-                                alt="Incident Evidence" 
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                onError={(e) => { e.target.src = 'https://via.placeholder.com/60x44?text=No+Img'; }}
-                              />
-                            </div>
-                            <div style={{ color: '#64748b', fontSize: 11, marginTop: 4 }}>{new Date(t.createdAt).toLocaleDateString()}</div>
-                          </td>
-                          <td style={{ padding: '20px 28px', fontSize: 14, fontWeight: 700, color: '#c9d4e8' }}>{t.aiCategory || 'General Issue'}</td>
-                          <td style={{ padding: '20px 28px', maxWidth: 220 }}>
-                            <div 
-                              onClick={() => {
-                                const q = (t.lat && t.lon) ? `${t.lat},${t.lon}` : t.location;
-                                setMapQuery({ q, label: t.location });
-                                document.querySelector('.scrollable-workspace').scrollTo({ top: 300, behavior: 'smooth' });
-                              }}
-                              style={{ 
-                                display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-                                transition: 'all 0.2s ease'
-                              }}
-                            >
-                              <div style={{ 
-                                width: 28, height: 28, borderRadius: 8, 
-                                background: 'rgba(59,130,246,0.1)', 
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                flexShrink: 0
+              <div style={{ overflowX: 'auto' }}>
+                <table className="incidents-table" style={{ width: '100%', minWidth: 800, borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${T.border}`, background: 'rgba(255,255,255,0.02)' }}>
+                      <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tracking ID</th>
+                      <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Evidence</th>
+                      <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category Target</th>
+                      <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Location Detail</th>
+                      <th style={{ padding: '16px 28px', fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Action Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
+                      <tr><td colSpan={5} style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Loading database...</td></tr>
+                    ) : tickets.length === 0 ? (
+                      <tr><td colSpan={5} style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>No incidents matched for {assignedArea}.</td></tr>
+                    ) : (
+                      tickets.map((t) => {
+                        const stCfg = getStatusColor(t.status);
+                        return (
+                          <tr key={t._id} style={{ borderBottom: `1px solid ${T.border}` }}>
+                            <td style={{ padding: '20px 28px', fontSize: 14, fontFamily: 'monospace', color: '#3b82f6', fontWeight: 700 }}>{t.trackingId}</td>
+                            <td style={{ padding: '20px 28px' }}>
+                              <div style={{
+                                width: 60, height: 44, borderRadius: 8,
+                                overflow: 'hidden', border: `1px solid ${T.border}`,
+                                background: 'rgba(0,0,0,0.2)'
                               }}>
-                                <MapPin size={14} color="#3b82f6" />
+                                <img
+                                  src={t.imageUrl.startsWith('http') ? t.imageUrl : `${API_BASE}${t.imageUrl}`}
+                                  alt="Incident Evidence"
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                  onError={(e) => { e.target.src = 'https://via.placeholder.com/60x44?text=No+Img'; }}
+                                />
                               </div>
-                              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ fontSize: 13, fontWeight: 700, color: T.textMain, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                  {t.location || 'Unknown Area'}
-                                </span>
-                                <span style={{ fontSize: 10, color: '#3b82f6', fontWeight: 800, textTransform: 'uppercase' }}>Pinpoint Area</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ padding: '20px 28px' }}>
-                            {t.status === 'Open' ? (
-                              <button
-                                onClick={() => handleStatusChange(t._id, t.status, 'In Progress')}
+                              <div style={{ color: '#64748b', fontSize: 11, marginTop: 4 }}>{new Date(t.createdAt).toLocaleDateString()}</div>
+                            </td>
+                            <td style={{ padding: '20px 28px', fontSize: 14, fontWeight: 700, color: '#c9d4e8' }}>{t.aiCategory || 'General Issue'}</td>
+                            <td style={{ padding: '20px 28px', maxWidth: 220 }}>
+                              <div
+                                onClick={() => {
+                                  const q = (t.lat && t.lon) ? `${t.lat},${t.lon}` : t.location;
+                                  setMapQuery({ q, label: t.location });
+                                  document.querySelector('.scrollable-workspace').scrollTo({ top: 300, behavior: 'smooth' });
+                                }}
                                 style={{
-                                  padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
-                                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                                  color: 'white', border: 'none', cursor: 'pointer',
-                                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
-                                  width: '120px'
+                                  display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+                                  transition: 'all 0.2s ease'
                                 }}
                               >
-                                Accept Case
-                              </button>
-                            ) : t.status === 'In Progress' ? (
-                              <button
-                                onClick={() => handleStatusChange(t._id, t.status, 'Resolved')}
-                                style={{
-                                  padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
-                                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                  color: 'white', border: 'none', cursor: 'pointer',
-                                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
-                                  width: '120px'
-                                }}
-                              >
-                                Mark Resolved
-                              </button>
-                            ) : (
-                               <div style={{
-                                 padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                                 background: stCfg.bg, color: stCfg.color,
-                                 border: `1px solid ${stCfg.border}`,
-                                 width: '120px', textAlign: 'center'
-                               }}>
-                                 {t.status === 'Verification Pending' ? 'Verifying... ⏳' : 
-                                  t.status === 'Resolved' ? 'Completed ✅' :
-                                  t.status === 'Rejected' ? 'Rejected ❌' : t.status}
-                               </div>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                                <div style={{
+                                  width: 28, height: 28, borderRadius: 8,
+                                  background: 'rgba(59,130,246,0.1)',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  flexShrink: 0
+                                }}>
+                                  <MapPin size={14} color="#3b82f6" />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                  <span style={{ fontSize: 13, fontWeight: 700, color: T.textMain, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                    {t.location || 'Unknown Area'}
+                                  </span>
+                                  <span style={{ fontSize: 10, color: '#3b82f6', fontWeight: 800, textTransform: 'uppercase' }}>Pinpoint Area</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td style={{ padding: '20px 28px' }}>
+                              {t.status === 'Open' ? (
+                                <button
+                                  onClick={() => handleStatusChange(t._id, t.status, 'In Progress')}
+                                  style={{
+                                    padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+                                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                    color: 'white', border: 'none', cursor: 'pointer',
+                                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
+                                    width: '120px'
+                                  }}
+                                >
+                                  Accept Case
+                                </button>
+                              ) : t.status === 'In Progress' ? (
+                                <button
+                                  onClick={() => handleStatusChange(t._id, t.status, 'Resolved')}
+                                  style={{
+                                    padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white', border: 'none', cursor: 'pointer',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+                                    width: '120px'
+                                  }}
+                                >
+                                  Mark Resolved
+                                </button>
+                              ) : (
+                                <div style={{
+                                  padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                                  background: stCfg.bg, color: stCfg.color,
+                                  border: `1px solid ${stCfg.border}`,
+                                  width: '120px', textAlign: 'center'
+                                }}>
+                                  {t.status === 'Verification Pending' ? 'Verifying... ⏳' :
+                                    t.status === 'Resolved' ? 'Completed ✅' :
+                                      t.status === 'Rejected' ? 'Rejected ❌' : t.status}
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
           )}
         </div>
       </main>
