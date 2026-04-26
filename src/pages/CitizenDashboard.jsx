@@ -144,7 +144,7 @@ const CitizenDashboard = () => {
   const handleConfirmResolution = async (ticketId, confirmed) => {
     setLoading(true);
     try {
-      await axios.patch(`${API_BASE}/api/report/ticket/${ticketId}/confirm-resolution`, { confirmed });
+      await axios.patch(`${API_BASE}/api/reports/ticket/${ticketId}/confirm-resolution`, { confirmed });
       await fetchTickets();
       if (selectedTicket?._id === ticketId) setSelectedTicket(null);
     } catch (err) {

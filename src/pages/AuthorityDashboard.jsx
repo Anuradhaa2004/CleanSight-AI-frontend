@@ -169,7 +169,7 @@ const AuthorityDashboard = () => {
   const handleStatusChange = async (ticketId, currentStatus, newStatus) => {
     if (currentStatus === newStatus) return;
     try {
-      await axios.patch(`${API_BASE}/api/report/ticket/${ticketId}/status`, { status: newStatus });
+      await axios.patch(`${API_BASE}/api/reports/ticket/${ticketId}/status`, { status: newStatus });
       fetchTickets();
     } catch (e) {
       console.error("Failed to update status", e);
