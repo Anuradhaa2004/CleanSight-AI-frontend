@@ -16,7 +16,7 @@ function App() {
   const location = useLocation();
 
   const isDashboard = ['/citizen', '/authority', '/report', '/login', '/signup', '/admin-profile', '/forgot-password', '/reset-password'].includes(location.pathname);
-  const shouldLockHeight = ['/citizen', '/authority', '/admin-profile'].includes(location.pathname);
+  const shouldLockHeight = ['/citizen', '/authority'].includes(location.pathname);
 
   return (
     <div className="page" style={shouldLockHeight ? { height: '100vh', overflow: 'hidden' } : { minHeight: '100vh' }}>
