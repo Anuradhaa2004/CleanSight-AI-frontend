@@ -167,7 +167,7 @@ const CitizenDashboard = () => {
     setLoading(true); setError('');
     try {
       const { data } = await axios.get(
-        `${API_BASE}/api/report/tickets?email=${encodeURIComponent(userEmail)}`
+        `${API_BASE}/api/reports/tickets?email=${encodeURIComponent(userEmail)}`
       );
       if (Array.isArray(data)) {
         const fifteenDaysAgo = new Date();

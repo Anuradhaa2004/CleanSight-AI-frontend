@@ -109,7 +109,7 @@ const AuthorityDashboard = () => {
 
   const fetchTickets = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/report/tickets`, {
+      const res = await axios.get(`${API_BASE}/api/reports/tickets`, {
         params: { role: 'authority', area: assignedArea }
       });
       setTickets(Array.isArray(res.data) ? res.data : []);
