@@ -48,7 +48,7 @@ const categoryConfig = {
   'Dead Animal': { color: '#ef4444', bg: 'rgba(239,68,68,0.12)', icon: '🐾' },
   'Sewer Damage': { color: '#f97316', bg: 'rgba(249,115,22,0.12)', icon: '🚧' },
   'Potholes': { color: '#eab308', bg: 'rgba(234,179,8,0.12)', icon: '🕳️' },
-  'General Waste': { color: '#6366f1', bg: 'rgba(99,102,241,0.12)', icon: '🗑️' },
+  'General Waste': { color: '#6366f1', bg: 'rgba(99,102,241,0.12)', icon: '' },
   'Pending Analysis': { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)', icon: '⏳' },
 };
 
@@ -442,7 +442,7 @@ const CitizenDashboard = () => {
           <button
             onClick={() => setSidebarOpen(o => !o)}
             style={{
-              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+              background: T.divider, border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: 10, padding: '8px', cursor: 'pointer',
               display: 'flex', color: T.textMuted, marginTop: 2
             }}
@@ -790,7 +790,22 @@ const CitizenDashboard = () => {
                   <LocalLocation locationData={locationData} loading={loading} T={T} isDark={isDark} />
                 </div>
 
-                {/* Recent table */}
+                {/* Summary Section */}
+                <div style={{ marginTop: 24 }}>
+                  <CategoryBreakdown tickets={tickets} loading={loading} T={T} />
+                </div>
+              </motion.div>
+            )}
+
+            {/* ══ REPORTS TAB ════════════════════════════════════ */}
+            {activeTab === 'reports' && (
+              <motion.div
+                key="reports"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.35 }}
+              >
                 {/* Filter Bar */}
                 <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
                   {/* Search */}
@@ -839,18 +854,15 @@ const CitizenDashboard = () => {
                   </div>
                 </div>
 
-                  <ReportsTable
-                    tickets={filtered}
-                    loading={loading}
-                    error={error}
-                    onView={setSelectedTicket}
-                    onAction={handleConfirmResolution}
-                    title={`${filtered.length} Report${filtered.length !== 1 ? 's' : ''}`}
-                    T={T}
-                  />
-
-                  {/* Category Breakdown */}
-                  <CategoryBreakdown tickets={tickets} loading={loading} T={T} />
+                <ReportsTable
+                  tickets={filtered}
+                  loading={loading}
+                  error={error}
+                  onView={setSelectedTicket}
+                  onAction={handleConfirmResolution}
+                  title={`${filtered.length} Report${filtered.length !== 1 ? 's' : ''}`}
+                  T={T}
+                />
               </motion.div>
             )}
 
@@ -1052,8 +1064,8 @@ const CategoryBreakdown = ({ tickets, loading, T }) => {
   return (
     <div style={{
       borderRadius: 20, padding: '22px 22px',
-      background: 'rgba(14,20,40,0.7)',
-      border: '1px solid rgba(255,255,255,0.07)',
+      background: T.card,
+      border: `1px solid ${T.cardBorder}`,
       backdropFilter: 'blur(12px)',
     }}>
       <div style={{ fontSize: 14, fontWeight: 800, color: T.textBold, marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1071,11 +1083,11 @@ const CategoryBreakdown = ({ tickets, loading, T }) => {
               <motion.div key={cat} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, alignItems: 'center' }}>
                   <span style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span>{cfg.icon}</span> {cat}
+                    {cat}
                   </span>
                   <span style={{ fontSize: 12, fontWeight: 700, color: cfg.color }}>{count}</span>
                 </div>
-                <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+                <div style={{ height: 6, borderRadius: 99, background: T.divider, overflow: 'hidden' }}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${pct}%` }}
@@ -1291,7 +1303,7 @@ const TimelineView = ({ tickets, loading, onView, onAction, T }) => {
             }}>
               <Calendar size={12} /> {date}
             </div>
-            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
+            <div style={{ flex: 1, height: 1, background: T.divider }} />
             <span style={{ fontSize: 11, color: T.textDim, fontWeight: 600 }}>{items.length} report{items.length !== 1 ? 's' : ''}</span>
           </div>
 
@@ -1450,7 +1462,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction, T, isDark }) 
             <button
               onClick={onClose}
               style={{
-                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                background: T.divider, border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: 10, padding: 8, cursor: 'pointer',
                 color: T.textMuted, display: 'flex',
               }}
