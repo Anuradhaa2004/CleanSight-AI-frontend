@@ -32,7 +32,6 @@ const AuthorityDashboard = () => {
   const [isDark, setIsDark] = useState(true);
 
   const userEmail = localStorage.getItem('userEmail') || '';
-  const userName = localStorage.getItem('userName') || 'Authority User';
   const assignedArea = localStorage.getItem('userArea') || '';
 
   // Theme Config (Dynamic Light / Dark)
@@ -237,9 +236,17 @@ const AuthorityDashboard = () => {
               <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{userEmail}</div>
             </div>
           </div>
-          <button onClick={handleLogout} style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-            <LogOut size={16} />
-          </button>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button 
+              onClick={() => navigate('/admin-profile')}
+              style={{ background: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: 'none', width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              <User size={16} />
+            </button>
+            <button onClick={handleLogout} style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+              <LogOut size={16} />
+            </button>
+          </div>
         </div>
         <div style={{ display: 'flex', padding: '12px 16px', gap: 8, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <button onClick={() => setActiveTab('board')} style={{ flex: '0 0 auto', padding: '10px 16px', borderRadius: 10, background: activeTab === 'board' ? 'rgba(59,130,246,0.1)' : 'transparent', color: activeTab === 'board' ? '#3b82f6' : T.text, border: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
@@ -295,10 +302,6 @@ const AuthorityDashboard = () => {
                 )}
               </span>
             )}
-          </button>
-          <button onClick={() => navigate('/admin-profile')} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px', borderRadius: 12, background: 'transparent', color: T.text, border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: 600 }}>
-            <User size={20} style={{ flexShrink: 0 }} />
-            {sidebarOpen && <span>Admin Profile</span>}
           </button>
         </nav>
 
@@ -608,7 +611,7 @@ const AuthorityDashboard = () => {
                             </div>
                           </td>
                           <td style={{ padding: '20px 28px' }}>
-                            {t.status === 'Open' && (
+                            {t.status === 'Open' ? (
                               <button
                                 onClick={() => handleStatusChange(t._id, t.status, 'In Progress')}
                                 style={{
@@ -621,8 +624,7 @@ const AuthorityDashboard = () => {
                               >
                                 Accept Case
                               </button>
-                            )}
-                            {t.status === 'In Progress' && (
+                            ) : t.status === 'In Progress' ? (
                               <button
                                 onClick={() => handleStatusChange(t._id, t.status, 'Resolved')}
                                 style={{
@@ -635,36 +637,17 @@ const AuthorityDashboard = () => {
                               >
                                 Mark Resolved
                               </button>
-                            )}
-                            {t.status === 'Verification Pending' && (
-                              <div style={{
-                                padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                                background: 'rgba(168, 85, 247, 0.12)', color: '#a855f7',
-                                border: '1px solid rgba(168, 85, 247, 0.3)',
-                                width: '120px', textAlign: 'center'
-                              }}>
-                                Verifying... ⏳
-                              </div>
-                            )}
-                            {t.status === 'Resolved' && (
-                              <div style={{
-                                padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                                background: 'rgba(34, 197, 94, 0.12)', color: '#22c55e',
-                                border: '1px solid rgba(34, 197, 94, 0.3)',
-                                width: '120px', textAlign: 'center'
-                              }}>
-                                Completed ✅
-                              </div>
-                            )}
-                            {t.status === 'Rejected' && (
-                              <div style={{
-                                padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                                background: 'rgba(239, 68, 68, 0.12)', color: '#ef4444',
-                                border: '1px solid rgba(239, 68, 68, 0.3)',
-                                width: '120px', textAlign: 'center'
-                              }}>
-                                Rejected ❌
-                              </div>
+                            ) : (
+                               <div style={{
+                                 padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                                 background: stCfg.bg, color: stCfg.color,
+                                 border: `1px solid ${stCfg.border}`,
+                                 width: '120px', textAlign: 'center'
+                               }}>
+                                 {t.status === 'Verification Pending' ? 'Verifying... ⏳' : 
+                                  t.status === 'Resolved' ? 'Completed ✅' :
+                                  t.status === 'Rejected' ? 'Rejected ❌' : t.status}
+                               </div>
                             )}
                           </td>
                         </tr>

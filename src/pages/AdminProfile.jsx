@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_BASE } from '../config/api';
 import {
   LogOut, Shield, LayoutDashboard, Database, User,
-  Sun, Moon, Camera, Mail, Lock, MapPin, Info
+  Sun, Moon, Camera, Mail, Lock, MapPin, Info, Calendar, Globe, Languages
 } from 'lucide-react';
 
 const AdminProfile = () => {
@@ -23,7 +23,12 @@ const AdminProfile = () => {
     password: '',
     assignedArea: '',
     about: '',
-    profilePic: ''
+    profilePic: '',
+    dob: '',
+    gender: '',
+    exactLocation: '',
+    country: '',
+    languages: []
   });
 
   const originalEmail = localStorage.getItem('userEmail') || '';
@@ -68,13 +73,19 @@ const AdminProfile = () => {
       try {
         const res = await axios.get(`${API_BASE}/api/auth/user?email=${encodeURIComponent(originalEmail)}`);
         if (res.data.user) {
+          const u = res.data.user;
           setFormData({
-            name: res.data.user.name,
-            email: res.data.user.email,
-            password: res.data.user.password,
-            assignedArea: res.data.user.assignedArea,
-            about: res.data.user.about || '',
-            profilePic: res.data.user.profilePic || ''
+            name: u.name,
+            email: u.email,
+            password: '', // Don't pre-fill password for security
+            assignedArea: u.assignedArea,
+            about: u.about || '',
+            profilePic: u.profilePic || '',
+            dob: u.dob ? new Date(u.dob).toISOString().split('T')[0] : '',
+            gender: u.gender || '',
+            exactLocation: u.exactLocation || '',
+            country: u.country || '',
+            languages: u.languages || []
           });
         }
       } catch (err) {
@@ -102,6 +113,23 @@ const AdminProfile = () => {
     }
   };
 
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setFormData({ ...formData, exactLocation: `${pos.coords.latitude}, ${pos.coords.longitude}` });
+      });
+    }
+  };
+
+  const handleLanguageChange = (lang) => {
+    setFormData(prev => {
+      const newLangs = prev.languages.includes(lang)
+        ? prev.languages.filter(l => l !== lang)
+        : [...prev.languages, lang];
+      return { ...prev, languages: newLangs };
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -122,6 +150,13 @@ const AdminProfile = () => {
     }
   };
 
+  const genderOptions = ['Male', 'Female', 'Non-binary', 'Other', 'Prefer not to say'];
+  const languageList = [
+    'English', 'Hindi', 'Spanish', 'French', 'German', 'Chinese', 
+    'Japanese', 'Russian', 'Arabic', 'Portuguese', 'Italian', 'Bengali',
+    'Marathi', 'Telugu', 'Tamil', 'Gujarati', 'Urdu', 'Kannada', 'Malayalam'
+  ];
+
   if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: T.bg, color: T.textMain }}>Loading...</div>;
 
   return (
@@ -135,6 +170,7 @@ const AdminProfile = () => {
          .form-input { width: 100%; padding: 14px 18px; border-radius: 12px; background: ${T.input}; border: 1px solid ${T.border}; color: ${T.textMain}; font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s; }
          .form-input:focus { border-color: ${T.accent}; }
          .section-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: ${T.accent}; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+         .lang-chip { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1px solid ${T.border}; }
       `}</style>
 
       {/* Desktop Sidebar */}
@@ -163,10 +199,6 @@ const AdminProfile = () => {
             <Database size={20} />
             {sidebarOpen && <span>Dashboard</span>}
           </button>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px', borderRadius: 12, background: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: 600 }}>
-            <User size={20} />
-            {sidebarOpen && <span>Admin Profile</span>}
-          </button>
         </nav>
 
         <div style={{ padding: '20px 16px', borderTop: `1px solid ${T.border}` }}>
@@ -184,7 +216,7 @@ const AdminProfile = () => {
              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'transparent', border: 'none', color: T.text, cursor: 'pointer' }}>
                 <LayoutDashboard size={24} />
              </button>
-             <h1 style={{ fontWeight: 700, color: T.textMain, margin: 0 }}>Edit Profile</h1>
+             <h1 style={{ fontWeight: 800, color: T.textMain, margin: 0, fontSize: 24 }}>Admin Profile</h1>
            </div>
            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
              <button onClick={() => setIsDark(!isDark)} style={{ width: 36, height: 36, borderRadius: 10, background: isDark ? 'rgba(255,255,255,0.05)' : '#eff6ff', border: `1px solid ${T.border}`, color: isDark ? '#facc15' : '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
@@ -204,42 +236,38 @@ const AdminProfile = () => {
            >
              <div style={{ background: T.card, borderRadius: 24, border: `1px solid ${T.border}`, overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
                
-               {/* Banner & Profile Pic Section */}
-               <div style={{ height: 120, background: 'linear-gradient(90deg, #3b82f6 0%, #2dd4bf 100%)', position: 'relative' }}>
-                  <div 
-                    onClick={() => fileInputRef.current.click()}
-                    style={{ 
-                      position: 'absolute', bottom: -50, left: 40, 
-                      width: 110, height: 110, borderRadius: '50%', 
-                      border: `4px solid ${isDark ? '#0a0d14' : '#fff'}`,
-                      background: '#1e293b', overflow: 'hidden', cursor: 'pointer'
-                    }}
-                  >
-                    {formData.profilePic ? (
-                      <img src={formData.profilePic} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <User size={50} color="#64748b" />
+               <div style={{ padding: '40px' }}>
+                  <div style={{ marginBottom: 40, paddingBottom: 20, borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                     <div>
+                       <h2 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: T.textMain }}>Account Settings</h2>
+                       <p style={{ margin: '4px 0 0 0', color: T.text, fontSize: 14 }}>Manage your professional identity and security</p>
+                     </div>
+                     <div 
+                        onClick={() => fileInputRef.current.click()}
+                        style={{ 
+                          width: 80, height: 80, borderRadius: 20, 
+                          border: `2px solid ${T.accent}40`,
+                          background: '#1e293b', overflow: 'hidden', cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          position: 'relative'
+                        }}
+                      >
+                        {formData.profilePic ? (
+                          <img src={formData.profilePic} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <User size={36} color="#64748b" />
+                          </div>
+                        )}
+                        <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
                       </div>
-                    )}
-                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }}>
-                       <Camera size={24} color="white" />
-                    </div>
-                  </div>
-                  <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
-               </div>
-
-               <div style={{ padding: '70px 40px 40px 40px' }}>
-                  <div style={{ marginBottom: 32 }}>
-                     <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: T.textMain }}>{formData.name || 'Set Name'}</h2>
-                     <p style={{ margin: '4px 0 0 0', color: T.accent, fontSize: 13, fontWeight: 700 }}>{formData.email}</p>
                   </div>
 
                   <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
                     
-                    {/* Basic Info Section */}
+                    {/* Basic Info */}
                     <div style={{ gridColumn: 'span 2' }}>
-                      <div className="section-label"><User size={14} /> Full Legal Name</div>
+                      <div className="section-label"><User size={14} /> Official Name</div>
                       <input 
                         type="text" 
                         value={formData.name} 
@@ -261,40 +289,99 @@ const AdminProfile = () => {
                     </div>
 
                     <div>
-                      <div className="section-label"><MapPin size={14} /> Authority Area</div>
+                      <div className="section-label"><Calendar size={14} /> Date of Birth</div>
+                      <input 
+                        type="date" 
+                        value={formData.dob} 
+                        onChange={(e) => setFormData({...formData, dob: e.target.value})}
+                        className="form-input"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="section-label"><User size={14} /> Gender</div>
                       <select 
-                        value={formData.assignedArea} 
-                        onChange={(e) => setFormData({...formData, assignedArea: e.target.value})}
+                        value={formData.gender} 
+                        onChange={(e) => setFormData({...formData, gender: e.target.value})}
                         className="form-input"
                       >
-                        <option value="Satna">Satna</option>
-                        <option value="Jabalpur">Jabalpur</option>
-                        <option value="Rewa">Rewa</option>
-                        <option value="Narsinghpur">Narsinghpur</option>
-                        <option value="Burhanpur">Burhanpur</option>
-                        <option value="Other">Other</option>
+                        <option value="">Select Gender</option>
+                        {genderOptions.map(g => <option key={g} value={g}>{g}</option>)}
                       </select>
                     </div>
 
+                    <div>
+                      <div className="section-label"><Globe size={14} /> Country</div>
+                      <input 
+                        type="text" 
+                        value={formData.country} 
+                        onChange={(e) => setFormData({...formData, country: e.target.value})}
+                        className="form-input"
+                        placeholder="e.g. India, USA"
+                      />
+                    </div>
+
                     <div style={{ gridColumn: 'span 2' }}>
-                       <div className="section-label"><Info size={14} /> About Me</div>
+                      <div className="section-label" style={{ justifyContent: 'space-between' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <MapPin size={14} /> Exact Location
+                        </span>
+                        <button 
+                          type="button" 
+                          onClick={getUserLocation}
+                          style={{ background: 'none', border: 'none', color: T.accent, fontSize: 10, fontWeight: 900, cursor: 'pointer' }}
+                        >
+                          DETECT CURRENT GPS
+                        </button>
+                      </div>
+                      <input 
+                        type="text" 
+                        value={formData.exactLocation} 
+                        onChange={(e) => setFormData({...formData, exactLocation: e.target.value})}
+                        className="form-input"
+                        placeholder="Coordinates or full address"
+                      />
+                    </div>
+
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <div className="section-label"><Languages size={14} /> Spoken Languages</div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, padding: '16px', borderRadius: 12, background: T.input, border: `1px solid ${T.border}` }}>
+                         {languageList.map(lang => (
+                           <div 
+                             key={lang}
+                             onClick={() => handleLanguageChange(lang)}
+                             className="lang-chip"
+                             style={{ 
+                               background: formData.languages.includes(lang) ? T.accent : 'transparent',
+                               color: formData.languages.includes(lang) ? '#fff' : T.text,
+                               borderColor: formData.languages.includes(lang) ? T.accent : T.border
+                             }}
+                           >
+                             {lang}
+                           </div>
+                         ))}
+                      </div>
+                    </div>
+
+                    <div style={{ gridColumn: 'span 2' }}>
+                       <div className="section-label"><Info size={14} /> Professional Description</div>
                        <textarea 
                          value={formData.about} 
                          onChange={(e) => setFormData({...formData, about: e.target.value})}
                          className="form-input"
-                         placeholder="Tell us about your role or professional background..."
-                         style={{ height: 100, resize: 'none', padding: '14px 18px' }}
+                         placeholder="Describe your role or department..."
+                         style={{ height: 90, resize: 'none', padding: '14px 18px' }}
                        />
                     </div>
 
                     <div style={{ gridColumn: 'span 2', position: 'relative' }}>
-                      <div className="section-label"><Lock size={14} /> Edit Password</div>
+                      <div className="section-label"><Lock size={14} /> Security Password</div>
                       <input 
                         type={showPassword ? "text" : "password"} 
                         value={formData.password} 
                         onChange={(e) => setFormData({...formData, password: e.target.value})}
                         className="form-input"
-                        placeholder="••••••••"
+                        placeholder="Update password (Limited to 3 times per 2 weeks)"
                       />
                       <button 
                         type="button"
@@ -312,7 +399,7 @@ const AdminProfile = () => {
                         type="submit"
                         style={{ width: '100%', padding: '16px', borderRadius: 14, background: `linear-gradient(135deg, ${T.accent} 0%, #1d4ed8 100%)`, color: 'white', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
                       >
-                        Update Profiles Details
+                        Commit Changes
                       </motion.button>
                     </div>
                   </form>
