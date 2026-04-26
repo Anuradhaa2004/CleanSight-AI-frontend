@@ -432,7 +432,7 @@ const CitizenDashboard = () => {
                       WebkitTextFillColor: 'transparent',
                     }}>AI</span>
                   </div>
-                  <div style={{ fontSize: 10, color: '#4b5679', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: 10, color: T.textMuted, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                     Citizen Hub
                   </div>
                 </motion.div>
@@ -444,7 +444,7 @@ const CitizenDashboard = () => {
             style={{
               background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: 10, padding: '8px', cursor: 'pointer',
-              display: 'flex', color: '#8b99c0', marginTop: 2
+              display: 'flex', color: T.textMuted, marginTop: 2
             }}
           >
             <Menu size={18} />
@@ -454,7 +454,7 @@ const CitizenDashboard = () => {
         {/* Nav */}
         <nav style={{ flex: 1, padding: sidebarOpen ? '20px 14px' : '20px 6px', display: 'flex', flexDirection: 'column', gap: 4 }}>
           {sidebarOpen && (
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#374162', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0 10px', marginBottom: 8, whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: T.textDim, letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0 10px', marginBottom: 8, whiteSpace: 'nowrap' }}>
               Navigation
             </div>
           )}
@@ -544,7 +544,7 @@ const CitizenDashboard = () => {
             style={{
               width: '100%', display: 'flex', alignItems: 'center', gap: sidebarOpen ? 10 : 0, justifyContent: sidebarOpen ? 'flex-start' : 'center',
               padding: sidebarOpen ? '10px 14px' : '12px 0', borderRadius: 12, border: '1px solid transparent',
-              background: 'transparent', color: '#4b5679', fontWeight: 600, fontSize: 13,
+              background: 'transparent', color: T.textMuted, fontWeight: 600, fontSize: 13,
               cursor: 'pointer', transition: 'all 0.2s', position: 'relative', overflow: 'hidden',
             }}
           >
@@ -565,10 +565,10 @@ const CitizenDashboard = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             {/* The menu button is now fully handled in the sidebar or sliding out on mobile. */}
             <div>
-              <h1 className="top-header-title" style={{ fontSize: 18, fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.02em' }}>
+              <h1 className="top-header-title" style={{ fontSize: 18, fontWeight: 800, color: T.textBold, letterSpacing: '-0.02em' }}>
                 {activeTab === 'dashboard' ? 'Overview' : activeTab === 'reports' ? 'My Reports' : 'History'}
               </h1>
-              <div className="top-header-date" style={{ fontSize: 12, color: '#4b5679', fontWeight: 500, marginTop: 1 }}>
+              <div className="top-header-date" style={{ fontSize: 12, color: T.textDim, fontWeight: 500, marginTop: 1 }}>
                 {now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
               </div>
             </div>
@@ -784,54 +784,33 @@ const CitizenDashboard = () => {
                 <div className="content-grid">
 
                   {/* Latest Ticket Card */}
-                  <LatestTicketSpotlight ticket={tickets[0]} loading={loading} />
+                  <LatestTicketSpotlight ticket={tickets[0]} loading={loading} T={T} />
 
                   {/* Local Location */}
-                  <LocalLocation locationData={locationData} loading={loading} />
+                  <LocalLocation locationData={locationData} loading={loading} T={T} />
                 </div>
 
                 {/* Recent table */}
-                <ReportsTable
-                  tickets={tickets.slice(0, 5)}
-                  loading={loading}
-                  error={error}
-                  onView={setSelectedTicket}
-                  onAction={handleConfirmResolution}
-                  compact
-                  title="Recent Activity"
-                />
-              </motion.div>
-            )}
-
-            {/* ══ REPORTS TAB ════════════════════════════════════ */}
-            {activeTab === 'reports' && (
-              <motion.div
-                key="reports"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.35 }}
-              >
                 {/* Filter Bar */}
                 <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
                   {/* Search */}
                   <div style={{
                     flex: 1, minWidth: 240, display: 'flex', alignItems: 'center', gap: 10,
                     padding: '10px 16px', borderRadius: 12,
-                    background: 'rgba(14,20,40,0.7)', border: '1px solid rgba(255,255,255,0.07)',
+                    background: T.inputBg, border: `1px solid ${T.cardBorder}`,
                   }}>
-                    <Search size={15} color="#4b5679" />
+                    <Search size={15} color={T.textDim} />
                     <input
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
                       placeholder="Search by ID, category, location…"
                       style={{
                         flex: 1, background: 'transparent', border: 'none', outline: 'none',
-                        color: '#c9d4e8', fontSize: 14, fontFamily: 'inherit',
+                        color: T.text, fontSize: 14, fontFamily: 'inherit',
                       }}
                     />
                     {searchQuery && (
-                      <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4b5679', display: 'flex' }}>
+                      <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textDim, display: 'flex' }}>
                         <X size={14} />
                       </button>
                     )}
@@ -848,9 +827,9 @@ const CitizenDashboard = () => {
                         style={{
                           padding: '8px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
                           fontSize: 13, fontWeight: 600,
-                          background: filterStatus === s ? 'rgba(99,102,241,0.2)' : 'rgba(14,20,40,0.7)',
-                          color: filterStatus === s ? '#818cf8' : '#4b5679',
-                          border: filterStatus === s ? '1px solid rgba(99,102,241,0.35)' : '1px solid rgba(255,255,255,0.06)',
+                          background: filterStatus === s ? 'rgba(99,102,241,0.2)' : T.inputBg,
+                          color: filterStatus === s ? '#818cf8' : T.textDim,
+                          border: filterStatus === s ? '1px solid rgba(99,102,241,0.35)' : `1px solid ${T.cardBorder}`,
                           transition: 'all 0.2s',
                         }}
                       >
@@ -867,6 +846,7 @@ const CitizenDashboard = () => {
                   onView={setSelectedTicket}
                   onAction={handleConfirmResolution}
                   title={`${filtered.length} Report${filtered.length !== 1 ? 's' : ''}`}
+                  T={T}
                 />
               </motion.div>
             )}
@@ -880,7 +860,7 @@ const CitizenDashboard = () => {
                 exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.35 }}
               >
-                <TimelineView tickets={tickets} loading={loading} onView={setSelectedTicket} onAction={handleConfirmResolution} />
+                <TimelineView tickets={tickets} loading={loading} onView={setSelectedTicket} onAction={handleConfirmResolution} T={T} />
               </motion.div>
             )}
 
@@ -891,7 +871,7 @@ const CitizenDashboard = () => {
       {/* ── Ticket Detail Modal ───────────────────────────── */}
       <AnimatePresence>
         {selectedTicket && (
-          <TicketDetailModal
+          <TicketDetailModal T={T}
             ticket={selectedTicket}
             onClose={() => setSelectedTicket(null)}
             onRefresh={fetchTickets}
@@ -916,7 +896,7 @@ const CitizenDashboard = () => {
 ══════════════════════════════════════════════════════════════ */
 
 /* Latest Ticket Spotlight */
-const LatestTicketSpotlight = ({ ticket, loading }) => {
+const LatestTicketSpotlight = ({ ticket, loading, T }) => {
   const cat = ticket ? getCatCfg(ticket.aiCategory) : getCatCfg('General Waste');
   const st = ticket ? getStatusCfg(ticket.status) : getStatusCfg('Open');
   const StIcon = st.icon;
@@ -938,8 +918,8 @@ const LatestTicketSpotlight = ({ ticket, loading }) => {
       whileHover={{ y: -2 }}
       style={{
         borderRadius: 20,
-        background: 'rgba(14,20,40,0.7)',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: T.card,
+        border: `1px solid ${T.cardBorder}`,
         overflow: 'hidden',
         backdropFilter: 'blur(12px)',
         position: 'relative',
@@ -963,7 +943,7 @@ const LatestTicketSpotlight = ({ ticket, loading }) => {
       </div>
 
       {/* Top Banner overlay */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '16px 20px', background: 'linear-gradient(to bottom, rgba(6,11,24,0.95) 0%, transparent 100%)', zIndex: 1, pointerEvents: 'none' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '16px 20px', background: `linear-gradient(to bottom, ${isDark ? 'rgba(6,11,24,0.95)' : 'rgba(248,250,252,0.95)'} 0%, transparent 100%)`, zIndex: 1, pointerEvents: 'none' }}>
         <div style={{ fontSize: 11, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'flex', alignItems: 'center', gap: 6, textShadow: '0 2px 10px rgba(0,0,0,1)' }}>
           <Activity size={12} color="#818cf8" /> Latest Report
         </div>
@@ -973,11 +953,11 @@ const LatestTicketSpotlight = ({ ticket, loading }) => {
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 1,
         padding: '30px 20px 20px',
-        background: 'linear-gradient(to top, rgba(6,11,24,0.95) 0%, rgba(6,11,24,0.6) 50%, transparent 100%)',
+        background: `linear-gradient(to top, ${isDark ? 'rgba(6,11,24,0.95)' : 'rgba(248,250,252,0.95)'} 0%, ${isDark ? 'rgba(6,11,24,0.6)' : 'rgba(248,250,252,0.6)'} 50%, transparent 100%)`,
         pointerEvents: 'none', display: 'flex', flexDirection: 'column'
       }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 6 }}>
-          <div style={{ fontSize: 24, fontWeight: 900, color: '#f1f5f9', letterSpacing: '-0.02em', textShadow: '0 2px 12px rgba(0,0,0,1)' }}>
+          <div style={{ fontSize: 24, fontWeight: 900, color: isDark ? '#f1f5f9' : T.textBold, letterSpacing: '-0.02em', textShadow: isDark ? '0 2px 12px rgba(0,0,0,1)' : 'none' }}>
             {cat.icon} {ticket.aiCategory || 'General Issue'}
           </div>
           <div style={{ background: `rgba(6,11,24,0.6)`, padding: '4px 10px', borderRadius: 8, border: `1px solid ${st.color}40`, backdropFilter: 'blur(10px)' }}>
@@ -986,7 +966,7 @@ const LatestTicketSpotlight = ({ ticket, loading }) => {
             </div>
           </div>
         </div>
-        <div style={{ fontSize: 13, color: '#e2e8f0', fontWeight: 600, textShadow: '0 2px 12px rgba(0,0,0,1)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ fontSize: 13, color: isDark ? '#e2e8f0' : T.text, fontWeight: 600, textShadow: isDark ? '0 2px 12px rgba(0,0,0,1)' : 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
           <MapPin size={12} /> {ticket.location || 'Location Not Specified'}
         </div>
       </div>
@@ -996,14 +976,14 @@ const LatestTicketSpotlight = ({ ticket, loading }) => {
 };
 
 /* Local Location Card */
-const LocalLocation = ({ locationData, loading }) => {
+const LocalLocation = ({ locationData, loading, T }) => {
   if (loading || locationData.fetchStatus === 'loading') return <PulseCard style={{ borderRadius: 20, height: 280 }} />;
 
   return (
     <div style={{
       borderRadius: 20,
-      background: 'rgba(14,20,40,0.7)',
-      border: '1px solid rgba(255,255,255,0.07)',
+      background: T.card,
+      border: `1px solid ${T.cardBorder}`,
       backdropFilter: 'blur(12px)',
       display: 'flex', flexDirection: 'column',
       position: 'relative', overflow: 'hidden',
@@ -1026,8 +1006,8 @@ const LocalLocation = ({ locationData, loading }) => {
       </div>
 
       {/* Top Banner overlay */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '16px 20px', background: 'linear-gradient(to bottom, rgba(6,11,24,0.9) 0%, transparent 100%)', zIndex: 1, pointerEvents: 'none' }}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'flex', alignItems: 'center', gap: 6, textShadow: '0 2px 10px rgba(0,0,0,1)' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '16px 20px', background: `linear-gradient(to bottom, ${isDark ? 'rgba(6,11,24,0.9)' : 'rgba(248,250,252,0.9)'} 0%, transparent 100%)`, zIndex: 1, pointerEvents: 'none' }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#fff' : T.textBold, textTransform: 'uppercase', letterSpacing: '0.15em', display: 'flex', alignItems: 'center', gap: 6, textShadow: isDark ? '0 2px 10px rgba(0,0,0,1)' : 'none' }}>
           <MapPin size={12} color="#818cf8" /> Current Location
         </div>
       </div>
@@ -1036,14 +1016,14 @@ const LocalLocation = ({ locationData, loading }) => {
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 1,
         padding: '30px 20px 20px',
-        background: 'linear-gradient(to top, rgba(6,11,24,0.95) 0%, rgba(6,11,24,0.7) 50%, transparent 100%)',
+        background: `linear-gradient(to top, ${isDark ? 'rgba(6,11,24,0.95)' : 'rgba(248,250,252,0.95)'} 0%, ${isDark ? 'rgba(6,11,24,0.7)' : 'rgba(248,250,252,0.7)'} 50%, transparent 100%)`,
         pointerEvents: 'none',
         display: 'flex', flexDirection: 'column', alignItems: 'center'
       }}>
-        <div style={{ fontSize: 26, fontWeight: 900, color: '#f1f5f9', textAlign: 'center', letterSpacing: '-0.02em', marginBottom: 2, textShadow: '0 2px 12px rgba(0,0,0,1)' }}>
+        <div style={{ fontSize: 26, fontWeight: 900, color: isDark ? '#f1f5f9' : T.textBold, textAlign: 'center', letterSpacing: '-0.02em', marginBottom: 2, textShadow: isDark ? '0 2px 12px rgba(0,0,0,1)' : 'none' }}>
           {locationData.place}
         </div>
-        <div style={{ fontSize: 13, color: '#818cf8', fontWeight: 700, textAlign: 'center', textShadow: '0 2px 12px rgba(0,0,0,1)' }}>
+        <div style={{ fontSize: 13, color: isDark ? '#818cf8' : '#6366f1', fontWeight: 700, textAlign: 'center', textShadow: isDark ? '0 2px 12px rgba(0,0,0,1)' : 'none' }}>
           {locationData.region || '—'}
         </div>
         {locationData.fetchStatus === 'error' && (
@@ -1073,12 +1053,12 @@ const CategoryBreakdown = ({ tickets, loading }) => {
       border: '1px solid rgba(255,255,255,0.07)',
       backdropFilter: 'blur(12px)',
     }}>
-      <div style={{ fontSize: 14, fontWeight: 800, color: '#c9d4e8', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ fontSize: 14, fontWeight: 800, color: T.textBold, marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
         <TrendingUp size={15} color="#6366f1" /> Category Breakdown
       </div>
 
       {sorted.length === 0 ? (
-        <div style={{ textAlign: 'center', color: '#374162', paddingTop: 60, fontSize: 13 }}>No data yet</div>
+        <div style={{ textAlign: 'center', color: T.textDim, paddingTop: 60, fontSize: 13 }}>No data yet</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {sorted.map(([cat, count], i) => {
@@ -1087,7 +1067,7 @@ const CategoryBreakdown = ({ tickets, loading }) => {
             return (
               <motion.div key={cat} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, alignItems: 'center' }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#8b99c0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span>{cfg.icon}</span> {cat}
                   </span>
                   <span style={{ fontSize: 12, fontWeight: 700, color: cfg.color }}>{count}</span>
@@ -1110,11 +1090,11 @@ const CategoryBreakdown = ({ tickets, loading }) => {
 };
 
 /* Reports Table */
-const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, title }) => {
+const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, title, T }) => {
   if (loading) return (
     <div style={{
-      borderRadius: 20, background: 'rgba(14,20,40,0.7)',
-      border: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden',
+      borderRadius: 20, background: T.card,
+      border: `1px solid ${T.cardBorder}`, overflow: 'hidden',
     }}>
       {[...Array(5)].map((_, i) => (
         <div key={i} style={{
@@ -1133,7 +1113,7 @@ const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, titl
     }}>
       <AlertCircle size={32} color="#ef4444" style={{ marginBottom: 12 }} />
       <div style={{ color: '#ef4444', fontWeight: 700, marginBottom: 6 }}>{error}</div>
-      <div style={{ color: '#4b5679', fontSize: 13 }}>Make sure the backend server is running on port 5000.</div>
+      <div style={{ color: T.textMuted, fontSize: 13 }}>Make sure the backend server is running on port 5000.</div>
     </div>
   );
 
@@ -1148,24 +1128,24 @@ const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, titl
   return (
     <div style={{
       borderRadius: 20, overflow: 'hidden',
-      background: 'rgba(14,20,40,0.7)',
-      border: '1px solid rgba(255,255,255,0.07)',
+      background: T.card,
+      border: `1px solid ${T.cardBorder}`,
       backdropFilter: 'blur(12px)',
     }}>
-      <div style={{ padding: '18px 22px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 14, fontWeight: 800, color: '#c9d4e8' }}>{title || 'Reports'}</span>
+      <div style={{ padding: '18px 22px 14px', borderBottom: `1px solid ${T.divider}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 14, fontWeight: 800, color: T.textBold }}>{title || 'Reports'}</span>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+            <tr style={{ borderBottom: `1px solid ${T.divider}` }}>
               {['Tracking ID', 'Category', 'Location', 'Date', 'Status', ''].map(h => (
                 <th key={h} style={{
                   padding: '10px 16px', textAlign: 'left',
-                  fontSize: 10, fontWeight: 700, color: '#374162',
+                  fontSize: 10, fontWeight: 700, color: T.textDim,
                   textTransform: 'uppercase', letterSpacing: '0.1em',
-                  background: 'rgba(255,255,255,0.02)',
+                  background: T.userCardBg,
                 }}>
                   {h}
                 </th>
@@ -1196,19 +1176,19 @@ const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, titl
                     </span>
                   </td>
                   <td style={{ padding: '14px 16px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#8b99c0', fontWeight: 500 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: T.textMuted, fontWeight: 500 }}>
                       <span>{cat.icon}</span> {t.aiCategory}
                     </span>
                   </td>
                   <td style={{ padding: '14px 16px' }}>
-                    <span style={{ fontSize: 12, color: '#4b5679', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ fontSize: 12, color: T.textMuted, display: 'flex', alignItems: 'center', gap: 5 }}>
                       <MapPin size={11} /> {t.location || '—'}
                     </span>
                   </td>
                   <td style={{ padding: '14px 16px' }}>
-                    <div style={{ fontSize: 12, color: '#4b5679' }}>
+                    <div style={{ fontSize: 12, color: T.textMuted }}>
                       <div>{fmtDate(t.createdAt)}</div>
-                      <div style={{ color: '#2c3557', marginTop: 1 }}>{fmtTime(t.createdAt)}</div>
+                      <div style={{ color: T.textDim, marginTop: 1 }}>{fmtTime(t.createdAt)}</div>
                     </div>
                   </td>
                   <td style={{ padding: '14px 16px' }}>
@@ -1280,7 +1260,7 @@ const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, titl
 };
 
 /* Timeline View */
-const TimelineView = ({ tickets, loading, onView, onAction }) => {
+const TimelineView = ({ tickets, loading, onView, onAction, T }) => {
   if (loading) return <PulseCard style={{ minHeight: 300, borderRadius: 20 }} />;
   if (tickets.length === 0) return (
     <EmptyCard icon={History} title="No History Yet" subtitle="Your timeline will appear here once you submit reports." />
@@ -1308,7 +1288,7 @@ const TimelineView = ({ tickets, loading, onView, onAction }) => {
               <Calendar size={12} /> {date}
             </div>
             <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
-            <span style={{ fontSize: 11, color: '#374162', fontWeight: 600 }}>{items.length} report{items.length !== 1 ? 's' : ''}</span>
+            <span style={{ fontSize: 11, color: T.textDim, fontWeight: 600 }}>{items.length} report{items.length !== 1 ? 's' : ''}</span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingLeft: 16, borderLeft: '2px solid rgba(99,102,241,0.15)' }}>
@@ -1326,8 +1306,8 @@ const TimelineView = ({ tickets, loading, onView, onAction }) => {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 16,
                     padding: '14px 18px', borderRadius: 14,
-                    background: 'rgba(14,20,40,0.7)',
-                    border: '1px solid rgba(255,255,255,0.06)',
+                    background: T.card,
+                    border: `1px solid ${T.cardBorder}`,
                     cursor: 'pointer',
                     position: 'relative',
                     marginLeft: -9,
@@ -1344,8 +1324,8 @@ const TimelineView = ({ tickets, loading, onView, onAction }) => {
 
                    <div style={{ fontSize: 20 }}>{cat.icon}</div>
                    <div style={{ flex: 1, minWidth: 0 }}>
-                     <div style={{ fontSize: 13, fontWeight: 700, color: '#c9d4e8' }}>{t.aiCategory}</div>
-                     <div style={{ fontSize: 11, color: '#4b5679', display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                     <div style={{ fontSize: 13, fontWeight: 700, color: T.textBold }}>{t.aiCategory}</div>
+                     <div style={{ fontSize: 11, color: T.textMuted, display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
                        <MapPin size={10} /> {t.location} &nbsp;•&nbsp; {fmtTime(t.createdAt)}
                      </div>
                    </div>
@@ -1392,7 +1372,7 @@ const TimelineView = ({ tickets, loading, onView, onAction }) => {
 };
 
 /* Ticket Detail Modal */
-const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
+const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction, T }) => {
   const [confirming, setConfirming] = useState(false);
   const cat = getCatCfg(ticket.aiCategory);
   const st = getStatusCfg(ticket.status);
@@ -1434,8 +1414,8 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
         onClick={e => e.stopPropagation()}
         style={{
           width: '100%', maxWidth: 760, maxHeight: '90vh',
-          background: '#0a0f1e',
-          border: '1px solid rgba(255,255,255,0.1)',
+          background: T.bg,
+          border: `1px solid ${T.cardBorder}`,
           borderRadius: 24, overflow: 'hidden',
           display: 'flex', flexDirection: 'column',
           boxShadow: '0 40px 80px rgba(0,0,0,0.6)',
@@ -1450,7 +1430,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ fontSize: 24 }}>{cat.icon}</div>
             <div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: '#f1f5f9' }}>{ticket.aiCategory}</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: T.textBold }}>{ticket.aiCategory}</div>
               <div style={{ fontSize: 11, fontFamily: 'monospace', color: '#818cf8', fontWeight: 700 }}>{ticket.trackingId}</div>
             </div>
           </div>
@@ -1468,7 +1448,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
               style={{
                 background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: 10, padding: 8, cursor: 'pointer',
-                color: '#8b99c0', display: 'flex',
+                color: T.textMuted, display: 'flex',
               }}
             >
               <X size={18} />
@@ -1521,11 +1501,11 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
               ) : (
                 <div style={{ height: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
                   <ImageIcon size={40} color="rgba(255,255,255,0.1)" />
-                  <span style={{ color: '#2c3557', fontSize: 13 }}>No image available</span>
+                  <span style={{ color: T.textDim, fontSize: 13 }}>No image available</span>
                 </div>
               )}
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(6,11,24,0.9), transparent)', padding: '20px 18px 14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#8b99c0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: T.textMuted }}>
                   <MapPin size={12} /> {ticket.location}
                 </div>
               </div>
@@ -1542,8 +1522,8 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
                   { label: 'Time', value: fmtTime(ticket.createdAt) },
                 ].map(item => (
                   <div key={item.label}>
-                    <div style={{ fontSize: 10, color: '#374162', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{item.label}</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#8b99c0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.value}</div>
+                    <div style={{ fontSize: 10, color: T.textDim, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{item.label}</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: T.textMuted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.value}</div>
                   </div>
                 ))}
               </div>
@@ -1552,7 +1532,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
               {ticket.confidence > 0 && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <span style={{ fontSize: 10, color: '#374162', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>AI Confidence</span>
+                    <span style={{ fontSize: 10, color: T.textDim, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>AI Confidence</span>
                     <span style={{ fontSize: 12, fontWeight: 700, color: '#22c55e' }}>{ticket.confidence}%</span>
                   </div>
                   <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)' }}>
@@ -1569,14 +1549,14 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
               {/* Description */}
               {ticket.description && (
                 <div style={{ padding: '12px 14px', borderRadius: 12, background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.12)' }}>
-                  <div style={{ fontSize: 10, color: '#374162', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Description</div>
-                  <div style={{ fontSize: 13, color: '#8b99c0', lineHeight: 1.6 }}>{ticket.description}</div>
+                  <div style={{ fontSize: 10, color: T.textDim, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Description</div>
+                  <div style={{ fontSize: 13, color: T.textMuted, lineHeight: 1.6 }}>{ticket.description}</div>
                 </div>
               )}
 
               {/* Timeline */}
               <div>
-                <div style={{ fontSize: 10, color: '#374162', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Progress Timeline</div>
+                <div style={{ fontSize: 10, color: T.textDim, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Progress Timeline</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {timeline.map((step, i) => (
                     <motion.div
@@ -1598,7 +1578,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction }) => {
                       </div>
                       <div>
                         <div style={{ fontSize: 12, fontWeight: 700, color: step.done ? '#c9d4e8' : '#374162' }}>{step.label}</div>
-                        <div style={{ fontSize: 11, color: '#2c3557', marginTop: 1 }}>{step.time}</div>
+                        <div style={{ fontSize: 11, color: T.textDim, marginTop: 1 }}>{step.time}</div>
                       </div>
                     </motion.div>
                   ))}
@@ -1689,8 +1669,8 @@ const EmptyCard = ({ icon: Icon, title, subtitle, style }) => (
     }}>
       <Icon size={28} color="rgba(255,255,255,0.15)" />
     </div>
-    <div style={{ fontSize: 16, fontWeight: 800, color: '#4b5679', marginBottom: 6 }}>{title}</div>
-    <div style={{ fontSize: 13, color: '#2c3557' }}>{subtitle}</div>
+    <div style={{ fontSize: 16, fontWeight: 800, color: T.textMuted, marginBottom: 6 }}>{title}</div>
+    <div style={{ fontSize: 13, color: T.textDim }}>{subtitle}</div>
   </div>
 );
 
