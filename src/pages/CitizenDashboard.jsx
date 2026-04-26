@@ -790,10 +790,63 @@ const CitizenDashboard = () => {
                   <LocalLocation locationData={locationData} loading={loading} T={T} isDark={isDark} />
                 </div>
 
-                {/* Summary Section */}
-                <div style={{ marginTop: 24 }}>
-                  <CategoryBreakdown tickets={tickets} loading={loading} T={T} />
+                {/* Filter Bar */}
+                <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap', marginTop: 24 }}>
+                  {/* Search */}
+                  <div style={{
+                    flex: 1, minWidth: 240, display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 16px', borderRadius: 12,
+                    background: T.inputBg, border: `1px solid ${T.cardBorder}`,
+                  }}>
+                    <Search size={15} color={T.textDim} />
+                    <input
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      placeholder="Search by ID, category, location…"
+                      style={{
+                        flex: 1, background: 'transparent', border: 'none', outline: 'none',
+                        color: T.text, fontSize: 14, fontFamily: 'inherit',
+                      }}
+                    />
+                    {searchQuery && (
+                      <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textDim, display: 'flex' }}>
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Status filters */}
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {['All', 'Open', 'In Progress', 'Resolved', 'Rejected'].map(s => (
+                      <motion.button
+                        key={s}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => setFilterStatus(s)}
+                        style={{
+                          padding: '8px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                          fontSize: 13, fontWeight: 600,
+                          background: filterStatus === s ? 'rgba(99,102,241,0.2)' : T.inputBg,
+                          color: filterStatus === s ? '#818cf8' : T.textDim,
+                          border: filterStatus === s ? '1px solid rgba(99,102,241,0.35)' : `1px solid ${T.cardBorder}`,
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        {s}
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
+
+                <ReportsTable
+                  tickets={filtered}
+                  loading={loading}
+                  error={error}
+                  onView={setSelectedTicket}
+                  onAction={handleConfirmResolution}
+                  title={`${filtered.length} Report${filtered.length !== 1 ? 's' : ''}`}
+                  T={T}
+                />
               </motion.div>
             )}
 
