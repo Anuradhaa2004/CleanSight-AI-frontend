@@ -784,10 +784,10 @@ const CitizenDashboard = () => {
                 <div className="content-grid">
 
                   {/* Latest Ticket Card */}
-                  <LatestTicketSpotlight ticket={tickets[0]} loading={loading} T={T} />
+                  <LatestTicketSpotlight ticket={tickets[0]} loading={loading} T={T} isDark={isDark} />
 
                   {/* Local Location */}
-                  <LocalLocation locationData={locationData} loading={loading} T={T} />
+                  <LocalLocation locationData={locationData} loading={loading} T={T} isDark={isDark} />
                 </div>
 
                 {/* Recent table */}
@@ -839,15 +839,18 @@ const CitizenDashboard = () => {
                   </div>
                 </div>
 
-                <ReportsTable
-                  tickets={filtered}
-                  loading={loading}
-                  error={error}
-                  onView={setSelectedTicket}
-                  onAction={handleConfirmResolution}
-                  title={`${filtered.length} Report${filtered.length !== 1 ? 's' : ''}`}
-                  T={T}
-                />
+                  <ReportsTable
+                    tickets={filtered}
+                    loading={loading}
+                    error={error}
+                    onView={setSelectedTicket}
+                    onAction={handleConfirmResolution}
+                    title={`${filtered.length} Report${filtered.length !== 1 ? 's' : ''}`}
+                    T={T}
+                  />
+
+                  {/* Category Breakdown */}
+                  <CategoryBreakdown tickets={tickets} loading={loading} T={T} />
               </motion.div>
             )}
 
@@ -871,7 +874,7 @@ const CitizenDashboard = () => {
       {/* ── Ticket Detail Modal ───────────────────────────── */}
       <AnimatePresence>
         {selectedTicket && (
-          <TicketDetailModal T={T}
+          <TicketDetailModal T={T} isDark={isDark}
             ticket={selectedTicket}
             onClose={() => setSelectedTicket(null)}
             onRefresh={fetchTickets}
@@ -896,7 +899,7 @@ const CitizenDashboard = () => {
 ══════════════════════════════════════════════════════════════ */
 
 /* Latest Ticket Spotlight */
-const LatestTicketSpotlight = ({ ticket, loading, T }) => {
+const LatestTicketSpotlight = ({ ticket, loading, T, isDark }) => {
   const cat = ticket ? getCatCfg(ticket.aiCategory) : getCatCfg('General Waste');
   const st = ticket ? getStatusCfg(ticket.status) : getStatusCfg('Open');
   const StIcon = st.icon;
@@ -906,7 +909,7 @@ const LatestTicketSpotlight = ({ ticket, loading, T }) => {
   );
 
   if (!ticket) return (
-    <EmptyCard icon={FileText} title="No Reports Yet" subtitle="Your latest report will appear here" style={{ borderRadius: 20, height: 340 }} />
+    <EmptyCard icon={FileText} title="No Reports Yet" subtitle="Your latest report will appear here" style={{ borderRadius: 20, height: 340 }} T={T} />
   );
 
   const imgSrc = ticket.imageUrl
@@ -976,7 +979,7 @@ const LatestTicketSpotlight = ({ ticket, loading, T }) => {
 };
 
 /* Local Location Card */
-const LocalLocation = ({ locationData, loading, T }) => {
+const LocalLocation = ({ locationData, loading, T, isDark }) => {
   if (loading || locationData.fetchStatus === 'loading') return <PulseCard style={{ borderRadius: 20, height: 280 }} />;
 
   return (
@@ -1035,7 +1038,7 @@ const LocalLocation = ({ locationData, loading, T }) => {
 };
 
 /* Category Breakdown */
-const CategoryBreakdown = ({ tickets, loading }) => {
+const CategoryBreakdown = ({ tickets, loading, T }) => {
   const counts = tickets.reduce((acc, t) => {
     const cat = t.aiCategory || 'General Waste';
     acc[cat] = (acc[cat] || 0) + 1;
@@ -1122,6 +1125,7 @@ const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, titl
       icon={FileText}
       title="No Reports Found"
       subtitle="Reports you submit will appear here."
+      T={T}
     />
   );
 
@@ -1263,7 +1267,7 @@ const ReportsTable = ({ tickets, loading, error, onView, onAction, compact, titl
 const TimelineView = ({ tickets, loading, onView, onAction, T }) => {
   if (loading) return <PulseCard style={{ minHeight: 300, borderRadius: 20 }} />;
   if (tickets.length === 0) return (
-    <EmptyCard icon={History} title="No History Yet" subtitle="Your timeline will appear here once you submit reports." />
+    <EmptyCard icon={History} title="No History Yet" subtitle="Your timeline will appear here once you submit reports." T={T} />
   );
 
   /* Group by date */
@@ -1372,7 +1376,7 @@ const TimelineView = ({ tickets, loading, onView, onAction, T }) => {
 };
 
 /* Ticket Detail Modal */
-const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction, T }) => {
+const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction, T, isDark }) => {
   const [confirming, setConfirming] = useState(false);
   const cat = getCatCfg(ticket.aiCategory);
   const st = getStatusCfg(ticket.status);
@@ -1604,7 +1608,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction, T }) => {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleConfirmResolution(true)}
+                      onClick={() => handleAction(true)}
                       disabled={confirming}
                       style={{
                         flex: 1, padding: '10px', borderRadius: 10, border: 'none',
@@ -1618,7 +1622,7 @@ const TicketDetailModal = ({ ticket, onClose, onRefresh, onAction, T }) => {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleConfirmResolution(false)}
+                      onClick={() => handleAction(false)}
                       disabled={confirming}
                       style={{
                         flex: 1, padding: '10px', borderRadius: 10, border: '1px solid #ef4444',
@@ -1653,7 +1657,7 @@ const PulseCard = ({ style }) => (
 );
 
 /* Empty state */
-const EmptyCard = ({ icon: Icon, title, subtitle, style }) => (
+const EmptyCard = ({ icon: Icon, title, subtitle, style, T }) => (
   <div style={{
     borderRadius: 20, padding: '60px 24px', textAlign: 'center',
     background: 'rgba(14,20,40,0.7)',
