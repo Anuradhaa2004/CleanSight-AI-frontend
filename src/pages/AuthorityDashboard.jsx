@@ -181,6 +181,24 @@ const AuthorityDashboard = () => {
     navigate('/', { replace: true });
   };
 
+  const handleProfileUpdate = async (updatedData) => {
+    try {
+      const res = await axios.post(`${API_BASE}/api/auth/update-profile`, {
+        email: userEmail,
+        ...updatedData
+      });
+      if (res.status === 200) {
+        localStorage.setItem('userName', res.data.user.name);
+        localStorage.setItem('userArea', res.data.user.assignedArea);
+        alert('Profile updated successfully');
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to update profile');
+    }
+  };
+
   const stats = {
     total: tickets.length,
     open: tickets.filter(t => t.status === 'Open').length,
@@ -296,6 +314,10 @@ const AuthorityDashboard = () => {
               </span>
             )}
           </button>
+          <button onClick={() => setActiveTab('profile')} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px', borderRadius: 12, background: activeTab === 'profile' ? 'rgba(59,130,246,0.1)' : 'transparent', color: activeTab === 'profile' ? '#3b82f6' : T.text, border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: 600 }}>
+            <User size={20} style={{ flexShrink: 0 }} />
+            {sidebarOpen && <span>Admin Profile</span>}
+          </button>
         </nav>
 
         <div style={{ padding: '20px 16px', borderTop: `1px solid ${T.border}` }}>
@@ -337,9 +359,14 @@ const AuthorityDashboard = () => {
             <div style={{ fontSize: 13, fontWeight: 600, color: '#64748b' }}>
               {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </div>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <User size={18} color="#3b82f6" />
-            </div>
+            <button 
+              onClick={() => setActiveTab('profile')}
+              style={{ padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
+            >
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: activeTab === 'profile' ? T.accent : 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
+                <User size={18} color={activeTab === 'profile' ? '#fff' : "#3b82f6"} />
+              </div>
+            </button>
           </div>
         </header>
 
@@ -668,9 +695,148 @@ const AuthorityDashboard = () => {
           </div>
           )}
 
+          {/* Profile Management Page */}
+          {activeTab === 'profile' && (
+            <ProfileForm 
+              initialData={{ name: userName, email: userEmail, area: assignedArea }}
+              onSave={handleProfileUpdate}
+              theme={T}
+              isDark={isDark}
+            />
+          )}
+
         </div>
       </main>
     </div>
   );
 };
+// Sub-component for Profile Form
+const ProfileForm = ({ initialData, onSave, theme, isDark }) => {
+  const [formData, setFormData] = useState({
+    name: initialData.name,
+    email: initialData.email,
+    password: '',
+    assignedArea: initialData.area
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch full details including password
+    const fetchFullDetails = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/auth/user?email=${encodeURIComponent(initialData.email)}`);
+        if (res.data.user) {
+          setFormData({
+            name: res.data.user.name,
+            email: res.data.user.email,
+            password: res.data.user.password,
+            assignedArea: res.data.user.assignedArea
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile details", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFullDetails();
+  }, [initialData.email]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  if (loading) return <div style={{ color: theme.text, textAlign: 'center', padding: 50 }}>Loading profile details...</div>;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ maxWidth: 800, margin: '0 auto' }}
+    >
+      <div style={{ background: theme.card, borderRadius: 24, border: `1px solid ${theme.border}`, overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
+        <div style={{ padding: '40px', background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(45,212,191,0.1) 100%)', borderBottom: `1px solid ${theme.border}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <div style={{ width: 80, height: 80, borderRadius: 24, background: theme.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 10px 20px ${theme.accent}40` }}>
+              <User size={40} color="white" />
+            </div>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: theme.textMain }}>Administrator Profile</h2>
+              <p style={{ margin: '4px 0 0 0', color: theme.text, fontSize: 14 }}>Manage your authority credentials and area assignment</p>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ padding: '40px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div style={{ gridColumn: 'span 2' }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: theme.accent, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Official Name</label>
+            <input 
+              type="text" 
+              value={formData.name} 
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              style={{ width: '100%', padding: '14px 18px', borderRadius: 12, background: isDark ? 'rgba(0,0,0,0.2)' : '#f1f5f9', border: `1px solid ${theme.border}`, color: theme.textMain, fontSize: 15, fontWeight: 600 }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: theme.accent, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Email Address</label>
+            <input 
+              type="email" 
+              readOnly 
+              value={formData.email} 
+              style={{ width: '100%', padding: '14px 18px', borderRadius: 12, background: isDark ? 'rgba(0,0,0,0.4)' : '#e2e8f0', border: `1px solid ${theme.border}`, color: '#64748b', fontSize: 15, fontWeight: 600, cursor: 'not-allowed' }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: theme.accent, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Assigned Area</label>
+            <select 
+              value={formData.assignedArea} 
+              onChange={(e) => setFormData({...formData, assignedArea: e.target.value})}
+              style={{ width: '100%', padding: '14px 18px', borderRadius: 12, background: isDark ? 'rgba(0,0,0,0.2)' : '#f1f5f9', border: `1px solid ${theme.border}`, color: theme.textMain, fontSize: 15, fontWeight: 600 }}
+            >
+              <option value="Satna">Satna</option>
+              <option value="Jabalpur">Jabalpur</option>
+              <option value="Rewa">Rewa</option>
+              <option value="Narsinghpur">Narsinghpur</option>
+              <option value="Burhanpur">Burhanpur</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div style={{ gridColumn: 'span 2', position: 'relative' }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: theme.accent, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Password</label>
+            <input 
+              type={showPassword ? "text" : "password"} 
+              value={formData.password} 
+              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              style={{ width: '100%', padding: '14px 18px', borderRadius: 12, background: isDark ? 'rgba(0,0,0,0.2)' : '#f1f5f9', border: `1px solid ${theme.border}`, color: theme.textMain, fontSize: 15, fontWeight: 600 }}
+            />
+            <button 
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ position: 'absolute', right: 15, top: 38, background: 'none', border: 'none', color: theme.accent, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}
+            >
+              {showPassword ? "HIDE" : "SHOW"}
+            </button>
+          </div>
+
+          <div style={{ gridColumn: 'span 2', marginTop: 10 }}>
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              style={{ width: '100%', padding: '16px', borderRadius: 12, background: `linear-gradient(135deg, ${theme.accent} 0%, #1d4ed8 100%)`, color: 'white', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', boxShadow: `0 10px 20px ${theme.accent}30` }}
+            >
+              Save Profile Changes
+            </motion.button>
+          </div>
+        </form>
+      </div>
+    </motion.div>
+  );
+};
+
 export default AuthorityDashboard;
