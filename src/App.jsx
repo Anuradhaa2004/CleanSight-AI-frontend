@@ -15,7 +15,7 @@ function App() {
   const userRole = localStorage.getItem('userRole');
   const location = useLocation();
 
-  const isDashboard = ['/citizen', '/authority', '/report', '/login', '/signup', '/admin-profile'].includes(location.pathname);
+  const isDashboard = ['/citizen', '/authority', '/report', '/login', '/signup', '/admin-profile', '/forgot-password', '/reset-password'].includes(location.pathname);
   const shouldLockHeight = ['/citizen', '/authority', '/admin-profile'].includes(location.pathname);
 
   return (

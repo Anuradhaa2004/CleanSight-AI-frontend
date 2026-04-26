@@ -33,6 +33,7 @@ const AuthorityDashboard = () => {
 
   const userEmail = localStorage.getItem('userEmail') || '';
   const assignedArea = localStorage.getItem('userArea') || '';
+  const userProfilePic = localStorage.getItem('userProfilePic') || '';
 
   // Theme Config (Dynamic Light / Dark)
   const T = isDark ? {
@@ -80,9 +81,10 @@ const AuthorityDashboard = () => {
         // Need to fetch area
         try {
           const res = await axios.get(`${API_BASE}/api/auth/user?email=${encodeURIComponent(userEmail)}`);
-          if (res.data.user.assignedArea) {
-            localStorage.setItem('userArea', res.data.user.assignedArea);
-            window.location.reload();
+          if (res.data.user) {
+            localStorage.setItem('userArea', res.data.user.assignedArea || '');
+            localStorage.setItem('userProfilePic', res.data.user.profilePic || '');
+            if (res.data.user.assignedArea && !assignedArea) window.location.reload();
           } else {
             setStatusMessage('No assigned authority area found for your account. Please contact SuperAdmin.');
           }
@@ -239,9 +241,15 @@ const AuthorityDashboard = () => {
           <div style={{ display: 'flex', gap: 12 }}>
             <button 
               onClick={() => navigate('/admin-profile')}
-              style={{ background: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: 'none', width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+              style={{ background: 'none', padding: 0, border: 'none', cursor: 'pointer' }}
             >
-              <User size={16} />
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(59,130,246,0.1)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {userProfilePic ? (
+                  <img src={userProfilePic} alt="Admin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <User size={16} color="#3b82f6" />
+                )}
+              </div>
             </button>
             <button onClick={handleLogout} style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
               <LogOut size={16} />
@@ -348,8 +356,12 @@ const AuthorityDashboard = () => {
               onClick={() => navigate('/admin-profile')}
               style={{ padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
             >
-              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
-                <User size={18} color="#3b82f6" />
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease', overflow: 'hidden' }}>
+                {userProfilePic ? (
+                  <img src={userProfilePic} alt="Admin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <User size={18} color="#3b82f6" />
+                )}
               </div>
             </button>
           </div>

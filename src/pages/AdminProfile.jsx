@@ -141,6 +141,7 @@ const AdminProfile = () => {
         localStorage.setItem('userName', res.data.user.name);
         localStorage.setItem('userEmail', res.data.user.email);
         localStorage.setItem('userArea', res.data.user.assignedArea);
+        localStorage.setItem('userProfilePic', res.data.user.profilePic || '');
         alert('Profile updated successfully');
         navigate('/authority');
       }
@@ -211,7 +212,7 @@ const AdminProfile = () => {
 
       {/* Main Content */}
       <main className="main-content">
-        <header className="top-header">
+        <header className="top-header" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'transparent', border: 'none', color: T.text, cursor: 'pointer' }}>
                 <LayoutDashboard size={24} />
@@ -232,7 +233,7 @@ const AdminProfile = () => {
            <motion.div 
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
-             style={{ maxWidth: 850, margin: '0 auto' }}
+             style={{ maxWidth: 850, margin: '20px auto 40px auto' }}
            >
              <div style={{ background: T.card, borderRadius: 24, border: `1px solid ${T.border}`, overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
                
