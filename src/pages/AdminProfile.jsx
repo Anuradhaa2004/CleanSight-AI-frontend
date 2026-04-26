@@ -42,7 +42,7 @@ const AdminProfile = () => {
     danger: '#ef4444', success: '#10b981', cardShadow: '0 20px 60px -15px rgba(0,0,0,0.08)'
   };
 
-  const genderOptions = ['Male', 'Female', 'Non-binary', 'Other', 'Prefer not to say'];
+  const genderOptions = ['Male', 'Female', 'Other'];
   const languageList = [
     'English', 'Hindi', 'Spanish', 'French', 'German', 'Chinese',
     'Japanese', 'Russian', 'Arabic', 'Portuguese', 'Italian', 'Bengali',
@@ -112,7 +112,7 @@ const AdminProfile = () => {
   };
 
   const Field = ({ label, icon: Icon, children, span2 }) => (
-    <div style={{ gridColumn: span2 ? 'span 2' : 'auto' }}>
+    <div className={span2 ? 'ap-field-span-2' : ''} style={{ gridColumn: span2 ? 'span 2' : 'auto' }}>
       <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 800, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         <Icon size={13} /> {label}
       </label>
@@ -143,7 +143,15 @@ const AdminProfile = () => {
         select.ap-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23638dff' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
         select.ap-input option { background: ${isDark ? '#0f1428' : '#fff'}; color: ${T.textMain}; }
         textarea.ap-input { resize: none; min-height: 100px; }
-        @media (max-width: 768px) { .ap-grid { grid-template-columns: 1fr !important; } .ap-hero-info { flex-direction: column; text-align: center; } .ap-tabs { overflow-x: auto; } }
+        .ap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .ap-content-card { background: ${T.surface}; border-radius: 24px; border: 1px solid ${T.border}; padding: 36px; box-shadow: ${T.cardShadow}; }
+        @media (max-width: 768px) { 
+          .ap-grid { grid-template-columns: 1fr; gap: 20px; } 
+          .ap-hero-info { flex-direction: column; text-align: center; gap: 20px; } 
+          .ap-tabs { overflow-x: auto; padding: 4px; }
+          .ap-content-card { padding: 24px 20px; }
+          .ap-field-span-2 { grid-column: span 1 !important; }
+        }
       `}</style>
 
       {/* Top Bar */}
@@ -221,9 +229,11 @@ const AdminProfile = () => {
             return (
               <motion.button key={tab.id} whileTap={{ scale: 0.97 }}
                 onClick={() => setActiveTab(tab.id)}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 20px', borderRadius: 14, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, fontFamily: "'Inter', sans-serif", transition: 'all 0.3s',
+                style={{
+                  flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 20px', borderRadius: 14, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, fontFamily: "'Inter', sans-serif", transition: 'all 0.3s',
                   background: active ? `linear-gradient(135deg, ${T.gradient1}, ${T.gradient3})` : 'transparent',
-                  color: active ? '#fff' : T.text, boxShadow: active ? `0 4px 15px ${T.accent}30` : 'none' }}>
+                  color: active ? '#fff' : T.text, boxShadow: active ? `0 4px 15px ${T.accent}30` : 'none'
+                }}>
                 <Icon size={16} /> {tab.label}
               </motion.button>
             );
@@ -235,7 +245,7 @@ const AdminProfile = () => {
           <AnimatePresence mode="wait">
             {activeTab === 'personal' && (
               <motion.div key="personal" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}
-                style={{ background: T.surface, borderRadius: 24, border: `1px solid ${T.border}`, padding: 36, boxShadow: T.cardShadow }}>
+                className="ap-content-card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 12, background: T.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <User size={20} color={T.accent} />
@@ -246,24 +256,24 @@ const AdminProfile = () => {
                   </div>
                 </div>
 
-                <div className="ap-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                <div className="ap-grid">
                   <Field label="Full Name" icon={User} span2>
-                    <input className="ap-input" type="text" value={formData.name} onChange={e => setFormData(p => ({...p, name: e.target.value}))} placeholder="Enter your full name" />
+                    <input className="ap-input" type="text" value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="Enter your full name" />
                   </Field>
                   <Field label="Email Address" icon={Mail}>
-                    <input className="ap-input" type="email" value={formData.email} onChange={e => setFormData(p => ({...p, email: e.target.value}))} placeholder="admin@cleansight.ai" />
+                    <input className="ap-input" type="email" value={formData.email} onChange={e => setFormData(p => ({ ...p, email: e.target.value }))} placeholder="admin@cleansight.ai" />
                   </Field>
                   <Field label="Date of Birth" icon={Calendar}>
-                    <input className="ap-input" type="date" value={formData.dob} onChange={e => setFormData(p => ({...p, dob: e.target.value}))} />
+                    <input className="ap-input" type="date" value={formData.dob} onChange={e => setFormData(p => ({ ...p, dob: e.target.value }))} />
                   </Field>
                   <Field label="Gender" icon={User}>
-                    <select className="ap-input" value={formData.gender} onChange={e => setFormData(p => ({...p, gender: e.target.value}))}>
+                    <select className="ap-input" value={formData.gender} onChange={e => setFormData(p => ({ ...p, gender: e.target.value }))}>
                       <option value="">Select Gender</option>
                       {genderOptions.map(g => <option key={g} value={g}>{g}</option>)}
                     </select>
                   </Field>
                   <Field label="Primary Language" icon={Languages}>
-                    <select className="ap-input" value={formData.languages[0] || ''} onChange={e => setFormData(p => ({...p, languages: [e.target.value]}))}>
+                    <select className="ap-input" value={formData.languages[0] || ''} onChange={e => setFormData(p => ({ ...p, languages: [e.target.value] }))}>
                       <option value="">Select Language</option>
                       <option value="English">English (Default)</option>
                       <option value="Hindi">Hindi (Default)</option>
@@ -273,7 +283,7 @@ const AdminProfile = () => {
                     </select>
                   </Field>
                   <Field label="Professional Bio" icon={Briefcase} span2>
-                    <textarea className="ap-input" value={formData.about} onChange={e => setFormData(p => ({...p, about: e.target.value}))} placeholder="Describe your role, department, or expertise..." />
+                    <textarea className="ap-input" value={formData.about} onChange={e => setFormData(p => ({ ...p, about: e.target.value }))} placeholder="Describe your role, department, or expertise..." />
                   </Field>
                 </div>
               </motion.div>
@@ -281,7 +291,7 @@ const AdminProfile = () => {
 
             {activeTab === 'location' && (
               <motion.div key="location" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}
-                style={{ background: T.surface, borderRadius: 24, border: `1px solid ${T.border}`, padding: 36, boxShadow: T.cardShadow }}>
+                className="ap-content-card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 12, background: `${T.gradient2}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <MapPin size={20} color={T.gradient2} />
@@ -292,16 +302,16 @@ const AdminProfile = () => {
                   </div>
                 </div>
 
-                <div className="ap-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                <div className="ap-grid">
                   <Field label="Country" icon={Globe}>
-                    <input className="ap-input" type="text" value={formData.country} onChange={e => setFormData(p => ({...p, country: e.target.value}))} placeholder="e.g. India, USA" />
+                    <input className="ap-input" type="text" value={formData.country} onChange={e => setFormData(p => ({ ...p, country: e.target.value }))} placeholder="e.g. India, USA" />
                   </Field>
                   <Field label="Assigned Area" icon={Shield}>
                     <input className="ap-input" type="text" value={formData.assignedArea} readOnly style={{ opacity: 0.6, cursor: 'not-allowed' }} />
                   </Field>
                   <Field label="GPS Coordinates" icon={MapPin} span2>
                     <div style={{ display: 'flex', gap: 10 }}>
-                      <input className="ap-input" type="text" value={formData.exactLocation} onChange={e => setFormData(p => ({...p, exactLocation: e.target.value}))} placeholder="Latitude, Longitude or address" style={{ flex: 1 }} />
+                      <input className="ap-input" type="text" value={formData.exactLocation} onChange={e => setFormData(p => ({ ...p, exactLocation: e.target.value }))} placeholder="Latitude, Longitude or address" style={{ flex: 1 }} />
                       <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} type="button" onClick={getUserLocation}
                         style={{ padding: '14px 20px', borderRadius: 14, background: `linear-gradient(135deg, ${T.gradient2}, ${T.gradient1})`, color: '#fff', border: 'none', fontSize: 12, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: `0 4px 15px ${T.gradient2}30` }}>
                         DETECT GPS
@@ -314,7 +324,7 @@ const AdminProfile = () => {
 
             {activeTab === 'security' && (
               <motion.div key="security" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}
-                style={{ background: T.surface, borderRadius: 24, border: `1px solid ${T.border}`, padding: 36, boxShadow: T.cardShadow }}>
+                className="ap-content-card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 12, background: `${T.gradient3}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <KeyRound size={20} color={T.gradient3} />
@@ -328,7 +338,7 @@ const AdminProfile = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                   <Field label="Update Password" icon={Lock} span2>
                     <div style={{ position: 'relative' }}>
-                      <input className="ap-input" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData(p => ({...p, password: e.target.value}))} placeholder="Enter new password (max 3 changes per 14 days)" style={{ paddingRight: 50 }} />
+                      <input className="ap-input" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={e => setFormData(p => ({ ...p, password: e.target.value }))} placeholder="Enter new password (max 3 changes per 14 days)" style={{ paddingRight: 50 }} />
                       <button type="button" onClick={() => setShowPassword(!showPassword)}
                         style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: T.accent, cursor: 'pointer', padding: 4 }}>
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
