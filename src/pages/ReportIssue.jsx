@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE } from '../config/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   UploadCloud, 
@@ -20,7 +21,6 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import { apiUrl } from '../config/api';
 
 const ReportIssue = () => {
   const navigate = useNavigate();
@@ -30,13 +30,20 @@ const ReportIssue = () => {
   const [coords, setCoords] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [aiCategory, setAiCategory] = useState('');
+  const [aiCategory, setAiCategory] = useState('General Waste');
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [detectingLocation, setDetectingLocation] = useState(false);
   const [locationMessage, setLocationMessage] = useState('');
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [, setLocationAccuracy] = useState(null);
+
+  const imageCategories = [
+    'General Waste',
+    'Potholes',
+    'Dead Animal',
+    'Sewer Damage'
+  ];
 
   // Auto-fill from localStorage and auto-detect location on page load
   useEffect(() => {
@@ -182,31 +189,13 @@ const ReportIssue = () => {
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result);
       reader.readAsDataURL(selected);
-
-      // Trigger AI Analysis immediately
-      setIsAnalyzing(true);
-      setAiCategory('');
-      
-      const analysisData = new FormData();
-      analysisData.append('image', selected);
-
-      try {
-        const res = await axios.post(apiUrl('/api/reports/analyze'), analysisData);
-        if (res.data.category) {
-          setAiCategory(res.data.category);
-        }
-      } catch (err) {
-        console.error('AI Analysis failed:', err);
-        setAiCategory('General Waste');
-      }
-      setIsAnalyzing(false);
     }
   };
 
   const removeFile = () => {
     setFile(null);
     setPreview(null);
-    setAiCategory('');
+    setAiCategory('General Waste');
   };
 
   const handleSubmit = async (e) => {
@@ -248,8 +237,9 @@ const ReportIssue = () => {
     submitData.append('userId', userId);
 
     try {
-      // Send to the new /api/report/ticket endpoint
-      const res = await axios.post(apiUrl('/api/reports/ticket'), submitData, {
+      // Send to the new /api/reports/ticket endpoint
+      const baseUrl = API_BASE || 'http://localhost:5000';
+      const res = await axios.post(`${baseUrl}/api/reports/ticket`, submitData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -263,12 +253,7 @@ const ReportIssue = () => {
       });
     } catch (err) {
       console.error('Submission failed:', err);
-      if (err?.message?.includes('API URL not configured')) {
-        setError(err.message);
-        setIsSubmitting(false);
-        return;
-      }
-      setError(err.response?.data?.message || err.response?.data?.error || 'Failed to submit ticket. Please try again.');
+      setError(err.response?.data?.message || 'Failed to submit ticket. Please try again.');
     }
     setIsSubmitting(false);
   };
@@ -466,8 +451,8 @@ const ReportIssue = () => {
                         <ShieldAlert size={22} strokeWidth={2.5} />
                       </div>
                       <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>AI Validation</p>
-                        <p style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0f172a' }}>{result.wasteCategory || 'Analyzing Waste'}</p>
+                        <p style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>Validated Category</p>
+                        <p style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0f172a' }}>{result.wasteCategory || 'General Waste'}</p>
                       </div>
                    </motion.div>
                    
@@ -668,6 +653,37 @@ const ReportIssue = () => {
                               }} 
                               required 
                             />
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                          <label style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', letterSpacing: '0.1em' }}>IMAGE CATEGORY</label>
+                          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                            <ShieldAlert size={18} color="#94a3b8" style={{ position: 'absolute', left: '1.25rem' }} />
+                            <select 
+                              value={aiCategory} 
+                              onChange={e => setAiCategory(e.target.value)} 
+                              className="mnc-input"
+                              style={{ 
+                                width: '100%', 
+                                padding: '1rem 1.25rem 1rem 3.25rem', 
+                                borderRadius: '12px', 
+                                border: '1px solid #e2e8f0', 
+                                backgroundColor: '#fcfdfe', 
+                                fontSize: '1rem', 
+                                color: '#0f172a', 
+                                outline: 'none', 
+                                transition: 'all 0.2s',
+                                appearance: 'none',
+                                cursor: 'pointer'
+                              }} 
+                              required 
+                            >
+                              {imageCategories.map(category => (
+                                <option key={category} value={category}>{category}</option>
+                              ))}
+                            </select>
+                            <ChevronRight size={18} color="#94a3b8" style={{ position: 'absolute', right: '1.25rem', transform: 'rotate(90deg)', pointerEvents: 'none' }} />
                           </div>
                         </div>
 
@@ -939,13 +955,9 @@ const ReportIssue = () => {
                               <CheckCircle2 size={16} color="white" />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                               <span style={{ fontSize: '0.7rem', fontWeight: '800', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI CATEGORY</span>
+                               <span style={{ fontSize: '0.7rem', fontWeight: '800', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>IMAGE CATEGORY</span>
                                <span style={{ fontSize: '1.1rem', fontWeight: '700' }}>
-                                 {isAnalyzing ? (
-                                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                     <Loader2 className="animate-spin" size={14} /> Analyzing...
-                                   </span>
-                                 ) : (aiCategory || 'Processing...')}
+                                 {aiCategory}
                                </span>
                             </div>
                          </div>
