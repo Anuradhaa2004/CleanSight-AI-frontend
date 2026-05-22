@@ -122,6 +122,28 @@ const Signup = () => {
     setLoading(true);
     setError('');
 
+    const trimmedEmail = String(email || '').trim();
+    const trimmedName = String(name || '').trim();
+
+    if (!trimmedEmail) {
+      setError('Please enter your email.');
+      setLoading(false);
+      return;
+    }
+
+    // `POST /api/auth/request-otp` is for signup: backend requires name + password for new users
+    if (!trimmedName) {
+      setError('Please enter your name.');
+      setLoading(false);
+      return;
+    }
+
+    if (!password) {
+      setError('Please enter a password.');
+      setLoading(false);
+      return;
+    }
+
     if (role === 'authority' && !assignedArea) {
       setError('Please select your assigned area before continuing.');
       setLoading(false);
@@ -131,7 +153,7 @@ const Signup = () => {
     try {
      await axios.post(
         apiUrl('/api/auth/request-otp'),
-        { email, password, role, name, assignedArea },
+        { email: trimmedEmail, password, role, name: trimmedName, assignedArea },
         { timeout: 30000 } // 30s Timeout
       );
       setStep(2);
