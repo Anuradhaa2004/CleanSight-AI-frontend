@@ -240,7 +240,8 @@ const ReportIssue = () => {
       // Send to the new /api/reports/ticket endpoint
       const baseUrl = API_BASE || 'http://localhost:5000';
       const res = await axios.post(`${baseUrl}/api/reports/ticket`, submitData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 45000
       });
       
       // Update result to match Ticket structure
@@ -253,7 +254,11 @@ const ReportIssue = () => {
       });
     } catch (err) {
       console.error('Submission failed:', err);
-      setError(err.response?.data?.message || 'Failed to submit ticket. Please try again.');
+      if (err.code === 'ECONNABORTED') {
+        setError('Server request timed out. Render backend may be waking up from sleep. Please try again in 10-20 seconds.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Failed to submit ticket. Please try again.');
+      }
     }
     setIsSubmitting(false);
   };
@@ -807,7 +812,7 @@ const ReportIssue = () => {
                         {isSubmitting ? (
                           <>
                             <Loader2 className="animate-spin" size={20} />
-                            Authenticating...
+                            Submitting Report...
                           </>
                         ) : (
                           <>
