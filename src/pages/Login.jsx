@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Leaf, Mail, Lock, LogIn, User, ShieldAlert, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Leaf, Mail, Lock, LogIn, User, ShieldAlert, AlertCircle, CheckCircle2, Loader2, Info } from 'lucide-react';
 import axios from 'axios';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -14,6 +14,18 @@ const Login = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Auto-detect intended role & destination from email links or redirect
+  useEffect(() => {
+    const fromPath = location.state?.from?.pathname || new URLSearchParams(location.search).get('redirect') || '';
+    if (fromPath.includes('authority')) {
+      setRole('authority');
+    } else if (fromPath.includes('citizen')) {
+      setRole('citizen');
+    }
+  }, [location]);
+
 
   // Track session state using onAuthStateChanged
   useEffect(() => {
@@ -104,14 +116,29 @@ const Login = () => {
 
       setSuccess('Logged in successfully! Redirecting...');
 
-      // 4. Clean navigation based on role
+      // 4. Smart Navigation: Redirect to originally requested destination from email or role dashboard
+      const fromLocation = location.state?.from;
+      const redirectQuery = new URLSearchParams(location.search).get('redirect');
+
+      let targetPath = null;
+      if (fromLocation) {
+        targetPath = typeof fromLocation === 'string'
+          ? fromLocation
+          : `${fromLocation.pathname}${fromLocation.search || ''}`;
+      } else if (redirectQuery) {
+        targetPath = redirectQuery;
+      }
+
       setTimeout(() => {
-        if (effectiveRole === 'authority') {
-          navigate('/authority');
+        if (targetPath) {
+          navigate(targetPath, { replace: true });
+        } else if (effectiveRole === 'authority') {
+          navigate('/authority', { replace: true });
         } else {
-          navigate('/report');
+          navigate('/citizen', { replace: true });
         }
-      }, 1000);
+      }, 700);
+
 
     } catch (err) {
       console.error('Firebase Login Error:', err);
@@ -190,8 +217,17 @@ const Login = () => {
           </button>
         </div>
 
+        {/* Redirect Notice Banner */}
+        {location.state?.from && !error && !success && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#1e40af', marginBottom: '1.25rem', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', padding: '0.75rem 1rem', borderRadius: '0.75rem', fontSize: '0.85rem', fontWeight: '600' }}>
+            <Info size={18} style={{ flexShrink: 0, color: '#1E75FF' }} />
+            <span>Please log in to continue to your dashboard.</span>
+          </div>
+        )}
+
         {/* Feedback Alerts */}
         {error && (
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#dc2626', marginBottom: '1.25rem', backgroundColor: '#fef2f2', border: '1px solid #fee2e2', padding: '0.75rem 1rem', borderRadius: '0.75rem', fontSize: '0.85rem', fontWeight: '500' }}>
             <AlertCircle size={18} style={{ flexShrink: 0 }} />
             <span>{error}</span>
