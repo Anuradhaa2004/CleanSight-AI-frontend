@@ -1,5 +1,5 @@
 const normalizeBase = (value) => {
-  if (!value) return '';
+  if (!value) return 'http://localhost:5000';
   return String(value).trim().replace(/\/+$/, '');
 };
 
@@ -9,13 +9,10 @@ export const API_BASE = normalizeBase(
 
 export const isApiConfigured = Boolean(API_BASE);
 
-export const apiUrl = (path) => {
-  if (!API_BASE) {
-    throw new Error(
-      'API URL not configured. Set VITE_API_URL (or VITE_API_BASE_URL) in your environment.'
-    );
-  }
+export const apiUrl = (path = '') => {
+  const base = API_BASE || 'http://localhost:5000';
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  return `${API_BASE}${cleanPath}`;
+  return `${base}${cleanPath}`;
 };
+
 

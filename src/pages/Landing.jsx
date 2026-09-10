@@ -681,8 +681,10 @@ const HowItWorks = () => {
             style={{ display: 'flex', gap: '2rem', marginBottom: '3rem', position: 'relative', zIndex: 2 }}
           >
             {/* Left: Indicator with ripple */}
-            <div style={{ flexShrink: 0, position: 'relative' }}>
-              <RippleNode cx={23} cy={23} color={step.color} delay={i * 0.3} />
+            <div style={{ flexShrink: 0, position: 'relative', width: '46px', height: '46px' }}>
+              <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none' }}>
+                <RippleNode cx={23} cy={23} color={step.color} delay={i * 0.3} />
+              </svg>
               <motion.div
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
