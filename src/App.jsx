@@ -62,6 +62,12 @@ function App() {
             }
           />
 
+          {/* Aliases for email and dashboard links */}
+          <Route path="/authority-dashboard" element={<Navigate to="/authority" replace />} />
+          <Route path="/citizen-dashboard" element={<Navigate to="/citizen" replace />} />
+          <Route path="/dashboard" element={<Navigate to="/citizen" replace />} />
+
+
           {/* Fallback for authenticated users */}
           <Route path="*" element={<Navigate to={userRole === 'authority' ? "/authority" : "/citizen"} replace />} />
         </Routes>
